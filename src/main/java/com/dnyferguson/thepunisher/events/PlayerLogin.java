@@ -47,26 +47,26 @@ public class PlayerLogin implements Listener {
             // Check if ip is banned first
             PreparedStatement pst = con.prepareStatement("SELECT * FROM `bans` WHERE `ip` = '" + ip + "'");
             ResultSet rs = pst.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 if (rs.getBoolean("active")) {
                     if (rs.getTimestamp("until") != null) {
                         callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("time"));
                     }
                     callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"));
+                    return;
                 }
-                return;
             }
             // Then check if uuid is present and if its banned or not
             pst = con.prepareStatement("SELECT * FROM `bans` WHERE `uuid` = '" + uuid + "'");
             rs = pst.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 if (rs.getBoolean("active")) {
                     if (rs.getTimestamp("until") != null) {
                         callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("time"));
                     }
                     callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"));
+                    return;
                 }
-                return;
             }
             // Check if user exists, if so update ign and ip. If not, create.
             pst = con.prepareStatement("SELECT * FROM `users` WHERE `uuid` = '" + uuid + "'");
