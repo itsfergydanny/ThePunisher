@@ -2,6 +2,7 @@ package com.dnyferguson.thepunisher;
 
 import com.dnyferguson.thepunisher.commands.BanCommand;
 import com.dnyferguson.thepunisher.commands.PunisherCommand;
+import com.dnyferguson.thepunisher.commands.UnbanCommand;
 import com.dnyferguson.thepunisher.database.MySQL;
 import com.dnyferguson.thepunisher.events.PlayerLogin;
 import org.bukkit.plugin.PluginManager;
@@ -22,6 +23,7 @@ public final class ThePunisher extends JavaPlugin {
 
         getCommand("punisher").setExecutor(new PunisherCommand(this));
         getCommand("ban").setExecutor(new BanCommand(this));
+        getCommand("unban").setExecutor(new UnbanCommand(this));
     }
 
     @Override

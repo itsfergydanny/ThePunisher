@@ -33,6 +33,12 @@ public class PunisherCommand implements CommandExecutor {
             message.append(listItemFormat.replace("%command%", "/ban (username/uuid/ip) (reason)").replace("%usage%", "Permanently ban a user."));
         }
 
+        if (sender.hasPermission("punisher.unban")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/unban (username/uuid/ip)").replace("%usage%", "Unban a user."));
+        }
+
 
 
 

@@ -9,3 +9,5 @@ commands:
     description: Lists available punishment commands.
   ban:
     description: Ban a player.
+  unban:
+    description: Unban a player.

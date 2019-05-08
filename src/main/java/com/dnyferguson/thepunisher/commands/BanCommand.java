@@ -28,18 +28,20 @@ public class BanCommand implements CommandExecutor {
             return true;
         }
 
+        String target = args[0].replaceAll("[^0-9a-zA-Z\\.-]", "");
+
         String[] argList = Arrays.copyOfRange(args, 1, args.length);
         String reason = String.join(" ", argList);
 
         Player player = (Player) sender;
         if (player != null) {
-            addBan(args[0], reason, player.getName(), player.getUniqueId().toString());
-            player.sendMessage(Chat.format("&aSuccessfully banned " + args[0] + " from the server for " + reason + "!"));
+            addBan(target, reason, player.getName(), player.getUniqueId().toString());
+            player.sendMessage(Chat.format("&aSuccessfully banned " + target + " from the server for " + reason + "!"));
             return true;
         }
 
-        addBan(args[0], reason, "Console", "");
-        sender.sendMessage(Chat.format("&aSuccessfully banned " + args[0] + " from the server for " + reason + "!"));
+        addBan(target, reason, "Console", "");
+        sender.sendMessage(Chat.format("&aSuccessfully banned " + target + " from the server for " + reason + "!"));
 
         // TODO : kick player off network
         return true;
