@@ -1,0 +1,21 @@
+#
+# Plugin created by fergydanny (dnyferguson), if you like this check out my other resources at https://www.spigotmc.org/resources/authors/fergydanny.25236/
+#
+# Use the /punisher command in-game to get a list of all the commands you have access to
+#
+
+# Configure your MySQL settings
+mysql:
+  ip: '127.0.0.1'
+  port: '3306'
+  username: 'username'
+  password: 'password'
+  database: 'thepunisher'
+
+# Configure global system settings here
+
+# Configure messages here
+messages:
+  punisher-command-header: '&e&lThe Punisher &7(Available Commands: %amount%)'
+  punisher-command-list-format: '&e%command% &7- &6%usage%'
+  punisher-command-no-available-commands: '&cYou currently have no permissions. Ask management about it!'
