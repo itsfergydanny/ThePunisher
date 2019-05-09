@@ -23,19 +23,15 @@ public class PlayerLogin implements Listener {
         String uuid = e.getUniqueId().toString();
         String ip = e.getAddress().getHostAddress();
 
-        System.out.println("[ThePunisher] user " + username + " has logged in with ip " + ip);
-
         checkUser(username, uuid, ip, new UserBannedCallback() {
             @Override
             public void denyLogin(String punisher, String reason) {
-                System.out.println("[ThePunisher] user should have been denied for perm ban");
                 String message = "perm ban";
                 e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, message);
             }
 
             @Override
             public void denyLogin(String punisher, String reason, Timestamp until) {
-                System.out.println("[ThePunisher] user should have been denied for temp ban");
                 String message = "temp ban";
                 e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, message);
             }

@@ -1,6 +1,7 @@
 package com.dnyferguson.thepunisher;
 
 import com.dnyferguson.thepunisher.commands.BanCommand;
+import com.dnyferguson.thepunisher.commands.CheckbanCommand;
 import com.dnyferguson.thepunisher.commands.PunisherCommand;
 import com.dnyferguson.thepunisher.commands.UnbanCommand;
 import com.dnyferguson.thepunisher.database.MySQL;
@@ -24,6 +25,7 @@ public final class ThePunisher extends JavaPlugin {
         getCommand("punisher").setExecutor(new PunisherCommand(this));
         getCommand("ban").setExecutor(new BanCommand(this));
         getCommand("unban").setExecutor(new UnbanCommand(this));
+        getCommand("checkban").setExecutor(new CheckbanCommand(this));
     }
 
     @Override

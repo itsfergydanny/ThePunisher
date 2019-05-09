@@ -1,6 +1,7 @@
 # The Punisher
 
 ### Commands (Format: command -> pemrission)
+- /punisher -> punisher.help
 - /ban (username/uuid/ip) (reason) -> punisher.ban
 - /unban (username/uuid/ip) -> punisher.unban
-- /tempban (username/uuid/ip) (reason) (time) -> punisher.tempban
+- /checkban (username/uuid/ip) -> punisher.checkban

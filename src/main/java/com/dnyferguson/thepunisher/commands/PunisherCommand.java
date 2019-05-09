@@ -22,6 +22,11 @@ public class PunisherCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!sender.hasPermission("punisher.list")) {
+            sender.sendMessage(Chat.format("&cYou don\'t have permission to do this."));
+            return false;
+        }
+
         int availableCommands = 0;
 
         StringBuilder message = new StringBuilder();
@@ -37,6 +42,12 @@ public class PunisherCommand implements CommandExecutor {
             availableCommands++;
             message.append("\n");
             message.append(listItemFormat.replace("%command%", "/unban (username/uuid/ip)").replace("%usage%", "Unban a user."));
+        }
+
+        if (sender.hasPermission("punisher.checkban")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/checkban (username/uuid/ip)").replace("%usage%", "Check if a player is currently banned."));
         }
 
 

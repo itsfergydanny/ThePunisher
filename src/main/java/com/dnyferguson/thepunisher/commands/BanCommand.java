@@ -23,6 +23,11 @@ public class BanCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!sender.hasPermission("punisher.ban")) {
+            sender.sendMessage(Chat.format("&cYou don\'t have permission to do this."));
+            return true;
+        }
+
         if (args.length < 2) {
             sender.sendMessage(Chat.format("&cInvalid syntax. Use /ban (username/uuid/ip) (reason)."));
             return true;

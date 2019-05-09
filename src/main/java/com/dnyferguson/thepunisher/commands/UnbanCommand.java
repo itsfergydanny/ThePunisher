@@ -20,14 +20,17 @@ public class UnbanCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!sender.hasPermission("punisher.unban")) {
+            sender.sendMessage(Chat.format("&cYou don\'t have permission to do this."));
+            return true;
+        }
+
         if (args.length < 1) {
             sender.sendMessage(Chat.format("&cInvalid syntax. Use /unban (username/uuid/ip)"));
             return true;
         }
         
         String target = args[0].replaceAll("[^0-9a-zA-Z\\.-]", "");
-
-        System.out.println("[ThePunisher] unban target is " + target);
 
         String banType = "username";
         

@@ -11,3 +11,5 @@ commands:
     description: Ban a player.
   unban:
     description: Unban a player.
+  checkban:
+    description: Check if a player is currently banned.
