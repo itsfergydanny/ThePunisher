@@ -37,6 +37,8 @@ public final class ThePunisher extends JavaPlugin {
         getCommand("mute").setExecutor(new MuteCommand(this));
         getCommand("unmute").setExecutor(new UnmuteCommand(this));
         getCommand("checkmute").setExecutor(new CheckmuteCommand(this));
+        getCommand("alts").setExecutor(new AltsCommand(this));
+        getCommand("kick").setExecutor(new KickCommand(this));
 
         // Iterate thru all online players to apply any mutes on reload
         for (Player player : Bukkit.getOnlinePlayers()) {

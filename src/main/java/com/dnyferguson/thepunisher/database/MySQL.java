@@ -50,6 +50,10 @@ public class MySQL {
             // Create logins table
             pst = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + database + "`.`logins` ( `id` INT NOT NULL AUTO_INCREMENT , `ign` VARCHAR(16) NOT NULL , `uuid` VARCHAR(36) NOT NULL , `ip` VARCHAR(50) NOT NULL , `time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
             pst.execute();
+
+            // Create kicks table
+            pst = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + database + "`.`kicks` ( `id` INT NOT NULL AUTO_INCREMENT , `ign` VARCHAR(16) NOT NULL , `uuid` VARCHAR(36) NOT NULL , `reason` VARCHAR(1024) NOT NULL, `time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
+            pst.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }

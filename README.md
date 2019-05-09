@@ -8,3 +8,5 @@
 - /mute (username/uuid/ip) reason -> punisher.mute
 - /unmute (username/uuid/ip) -> punisher.unmute
 - /checkmute (username/uuid/ip) -> punisher.checkmute
+- /alts (username/uuid/ip) -> punisher.alts
+- /kick (username) (reason) -> punisher.kick

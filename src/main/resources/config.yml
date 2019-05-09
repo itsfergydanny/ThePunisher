@@ -35,6 +35,16 @@ blocked-commands-when-muted:
   - '/m'
   - '/pm'
 
+#
+# Kicks
+#
+
+# If the kick reason contains any of the following reasons, it will not be logged/saved
+dont-log-reasons:
+  - 'restart'
+  - 'shutdown'
+  - 'reboot'
+
 # Configure messages here
 messages:
   punisher-command-header: '&e&lThe Punisher &7(Available Commands: %amount%)'

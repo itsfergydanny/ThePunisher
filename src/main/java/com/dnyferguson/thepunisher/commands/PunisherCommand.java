@@ -68,6 +68,20 @@ public class PunisherCommand implements CommandExecutor {
             message.append(listItemFormat.replace("%command%", "/checkmute (username/uuid/ip)").replace("%usage%", "Check if a player is currently muted."));
         }
 
+        if (sender.hasPermission("punisher.alts")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/alts (username/uuid/ip)").replace("%usage%", "Check whos sharing an ip with a player."));
+        }
+
+        if (sender.hasPermission("punisher.kick")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/kick (username) (reason)").replace("%usage%", "Kick a player."));
+        }
+
+
+
 
 
 
