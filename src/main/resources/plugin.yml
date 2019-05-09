@@ -13,3 +13,9 @@ commands:
     description: Unban a player.
   checkban:
     description: Check if a player is currently banned.
+  mute:
+    description: Mute a player.
+  unmute:
+    description: Unmute a player.
+  checkmute:
+    description: Check if a player is currently muted.

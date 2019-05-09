@@ -35,19 +35,37 @@ public class PunisherCommand implements CommandExecutor {
         if (sender.hasPermission("punisher.ban")) {
             availableCommands++;
             message.append("\n");
-            message.append(listItemFormat.replace("%command%", "/ban (username/uuid/ip) (reason)").replace("%usage%", "Permanently ban a user."));
+            message.append(listItemFormat.replace("%command%", "/ban (username/uuid/ip) (reason)").replace("%usage%", "Permanently ban a player."));
         }
 
         if (sender.hasPermission("punisher.unban")) {
             availableCommands++;
             message.append("\n");
-            message.append(listItemFormat.replace("%command%", "/unban (username/uuid/ip)").replace("%usage%", "Unban a user."));
+            message.append(listItemFormat.replace("%command%", "/unban (username/uuid/ip)").replace("%usage%", "Unban a player."));
         }
 
         if (sender.hasPermission("punisher.checkban")) {
             availableCommands++;
             message.append("\n");
             message.append(listItemFormat.replace("%command%", "/checkban (username/uuid/ip)").replace("%usage%", "Check if a player is currently banned."));
+        }
+
+        if (sender.hasPermission("punisher.mute")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/mute (username/uuid/ip) (reason)").replace("%usage%", "Mute a player."));
+        }
+
+        if (sender.hasPermission("punisher.unmute")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/unmute (username/uuid/ip)").replace("%usage%", "Unmute a player."));
+        }
+
+        if (sender.hasPermission("punisher.checkmute")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/checkmute (username/uuid/ip)").replace("%usage%", "Check if a player is currently muted."));
         }
 
 

@@ -14,6 +14,27 @@ mysql:
 
 # Configure global system settings here
 
+
+#
+# Mutes
+#
+blocked-commands-when-muted:
+  - '/msg'
+  - '/emsg'
+  - '/message'
+  - '/emessage'
+  - '/r'
+  - '/er'
+  - '/reply'
+  - '/ereply'
+  - '/tell'
+  - '/etell'
+  - '/whisper'
+  - '/ewhisper'
+  - '/me'
+  - '/m'
+  - '/pm'
+
 # Configure messages here
 messages:
   punisher-command-header: '&e&lThe Punisher &7(Available Commands: %amount%)'

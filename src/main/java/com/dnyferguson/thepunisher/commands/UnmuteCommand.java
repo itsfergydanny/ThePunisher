@@ -12,36 +12,36 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UnbanCommand implements CommandExecutor {
+public class UnmuteCommand implements CommandExecutor {
 
     private ThePunisher plugin;
 
-    public UnbanCommand(ThePunisher plugin) {
+    public UnmuteCommand(ThePunisher plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!sender.hasPermission("punisher.unban")) {
+        if (!sender.hasPermission("punisher.unmute")) {
             sender.sendMessage(Chat.format("&cYou don\'t have permission to do this."));
             return true;
         }
 
         if (args.length < 1) {
-            sender.sendMessage(Chat.format("&cInvalid syntax. Use /unban (username/uuid/ip)"));
+            sender.sendMessage(Chat.format("&cInvalid syntax. Use /unmute (username/uuid/ip)"));
             return true;
         }
-        
+
         String target = args[0].replaceAll("[^0-9a-zA-Z\\.-]", "");
 
-        String banType = plugin.getSql().getTargetType(target);
-        
-        unban(target, banType, sender);
-        
+        String muteType = plugin.getSql().getTargetType(target);
+
+        unmute(target, muteType, sender);
+
         return true;
     }
 
-    private void unban(String target, String banType, CommandSender sender) {
+    private void unmute(String target, String muteType, CommandSender sender) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
@@ -57,18 +57,22 @@ public class UnbanCommand implements CommandExecutor {
 
                     boolean found = false;
 
-                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `bans` WHERE `" + banType + "` = '" + target + "' AND `active` = 1");
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `" + muteType + "` = '" + target + "' AND `active` = 1");
                     ResultSet rs = pst.executeQuery();
                     while (rs.next()) {
+                        String uuid = rs.getString("uuid");
+
                         found = true;
-                        pst = con.prepareStatement("UPDATE `bans` SET `active`='0',`remover_ign`='" + removerIgn + "',`remover_uuid`='" + removerUuid + "',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + rs.getString("uuid") + "'");
+                        pst = con.prepareStatement("UPDATE `mutes` SET `active`='0',`remover_ign`='" + removerIgn + "',`remover_uuid`='" + removerUuid + "',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "'");
                         pst.execute();
+
+                        plugin.getMutedPlayers().remove(uuid);
                     }
 
                     if (found) {
-                        sender.sendMessage(Chat.format("&aSuccessfully unbanned " + target + "!"));
+                        sender.sendMessage(Chat.format("&aSuccessfully unmuted " + target + "!"));
                     } else {
-                        sender.sendMessage(Chat.format("&cPlayer not found or not banned."));
+                        sender.sendMessage(Chat.format("&cPlayer not found or not muted."));
                     }
 
                 } catch (SQLException e) {

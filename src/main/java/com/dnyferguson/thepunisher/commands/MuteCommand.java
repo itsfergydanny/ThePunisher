@@ -13,23 +13,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
-public class BanCommand implements CommandExecutor {
+public class MuteCommand implements CommandExecutor {
 
     private ThePunisher plugin;
 
-    public BanCommand(ThePunisher plugin) {
+    public MuteCommand(ThePunisher plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!sender.hasPermission("punisher.ban")) {
+        if (!sender.hasPermission("punisher.mute")) {
             sender.sendMessage(Chat.format("&cYou don\'t have permission to do this."));
             return true;
         }
 
         if (args.length < 2) {
-            sender.sendMessage(Chat.format("&cInvalid syntax. Use /ban (username/uuid/ip) (reason)."));
+            sender.sendMessage(Chat.format("&cInvalid syntax. Use /mute (username/uuid/ip) (reason)."));
             return true;
         }
 
@@ -47,11 +47,11 @@ public class BanCommand implements CommandExecutor {
             punisherUuid = player.getUniqueId().toString();
         }
 
-        addBan(sender, target, targetType, reason, punisherIgn, punisherUuid);
+        addMute(sender, target, targetType, reason, punisherIgn, punisherUuid);
         return true;
     }
 
-    private void addBan(CommandSender sender, String target, String targetType, String reason, String punisherIgn, String punisherUUID) {
+    private void addMute(CommandSender sender, String target, String targetType, String reason, String punisherIgn, String punisherUUID) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
@@ -60,7 +60,7 @@ public class BanCommand implements CommandExecutor {
                     String ign = target;
                     String ip = target;
 
-                    // Check if already banned
+                    // Check if already muted
                     PreparedStatement pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1");
                     ResultSet rs = pst.executeQuery();
                     if (rs.next()) {
@@ -75,11 +75,12 @@ public class BanCommand implements CommandExecutor {
                         ign = rs.getString("ign");
                         ip = rs.getString("ip");
 
-                        // Apply ban
-                        sender.sendMessage(Chat.format("&aSuccessfully banned " + target + " for " + reason + "!"));
+                        // Apply mute
+                        plugin.getMutedPlayers().add(uuid);
+                        sender.sendMessage(Chat.format("&aSuccessfully muted " + target + " for " + reason + "!"));
                     }
 
-                    pst = con.prepareStatement("INSERT INTO `bans` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
+                    pst = con.prepareStatement("INSERT INTO `mutes` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
                             " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL," +
                             " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, NULL, '" + ip + "', '', '', NULL)");
                     pst.execute();

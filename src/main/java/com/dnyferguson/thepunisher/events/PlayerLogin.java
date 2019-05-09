@@ -17,7 +17,7 @@ public class PlayerLogin implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler (priority = EventPriority.HIGHEST)
+    @EventHandler
     public void onPlayerPreLogin(AsyncPlayerPreLoginEvent e) {
         String username = e.getName();
         String uuid = e.getUniqueId().toString();
@@ -64,6 +64,26 @@ public class PlayerLogin implements Listener {
                     return;
                 }
             }
+
+            // Check if ip is muted first
+            pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `ip` = '" + ip + "'");
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                if (rs.getBoolean("active")) {
+                    plugin.getMutedPlayers().add(uuid);
+                    return;
+                }
+            }
+            // Then check if uuid is present and if its muted or not
+            pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `uuid` = '" + uuid + "'");
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                if (rs.getBoolean("active")) {
+                    plugin.getMutedPlayers().add(uuid);
+                    return;
+                }
+            }
+
             // Check if user exists, if so update ign and ip. If not, create.
             pst = con.prepareStatement("SELECT * FROM `users` WHERE `uuid` = '" + uuid + "'");
             rs = pst.executeQuery();
@@ -77,7 +97,6 @@ public class PlayerLogin implements Listener {
             // Add login to history
             pst = con.prepareStatement("INSERT INTO `logins` (`id`, `ign`, `uuid`, `ip`, `time`) VALUES (NULL, '" + username + "', '" + uuid + "', '" + ip + "', CURRENT_TIMESTAMP)");
             pst.execute();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
