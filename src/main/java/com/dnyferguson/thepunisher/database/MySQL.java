@@ -52,7 +52,7 @@ public class MySQL {
             pst.execute();
 
             // Create kicks table
-            pst = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + database + "`.`kicks` ( `id` INT NOT NULL AUTO_INCREMENT , `ign` VARCHAR(16) NOT NULL , `uuid` VARCHAR(36) NOT NULL , `reason` VARCHAR(1024) NOT NULL, `time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
+            pst = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + database + "`.`kicks` ( `id` INT NOT NULL AUTO_INCREMENT , `ign` VARCHAR(16) NOT NULL , `uuid` VARCHAR(36) NOT NULL , `reason` VARCHAR(1024) NOT NULL, `punisher_ign` VARCHAR(16) NOT NULL , `punisher_uuid` VARCHAR(36) NOT NULL , `time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
             pst.execute();
         } catch (SQLException e) {
             e.printStackTrace();

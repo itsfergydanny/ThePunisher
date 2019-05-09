@@ -40,10 +40,19 @@ public class KickCommand implements CommandExecutor {
         String[] argList = Arrays.copyOfRange(args, 1, args.length);
         String reason = String.join(" ", argList);
 
+        String punisherIgn = "Console";
+        String punisherUuid = "";
+
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            punisherIgn = player.getName();
+            punisherUuid = player.getUniqueId().toString();
+        }
+
         if (target != null) {
             boolean shouldLog = true;
             target.kickPlayer(Chat.format("&cYou have been kicked for: " + reason));
-            sender.sendMessage(Chat.format("&aYou have succesfully kicked " + target + " for " + reason + "!"));
+            sender.sendMessage(Chat.format("&aYou have succesfully kicked " + target.getName() + " for " + reason + "!"));
 
             for (String str : dontLogReasons) {
                 if (reason.contains(str)) {
@@ -52,22 +61,26 @@ public class KickCommand implements CommandExecutor {
             }
 
             if (shouldLog) {
-                plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        try (Connection con = plugin.getSql().getDatasource().getConnection()) {
-                            PreparedStatement pst = con.prepareStatement("INSERT INTO `kicks` (`id`, `ign`, `uuid`, `reason`, `time`) VALUES (NULL, '" + target.getName() + "', '" + target.getUniqueId() + "', '" + reason + "', CURRENT_TIMESTAMP)");
-                            pst.execute();
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                log(target, reason, punisherIgn, punisherUuid);
             }
             return true;
         }
 
         sender.sendMessage(Chat.format("&cPlayer not found."));
         return true;
+    }
+
+    private void log(Player target, String reason, String punisherIgn, String punisherUuid) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try (Connection con = plugin.getSql().getDatasource().getConnection()) {
+                    PreparedStatement pst = con.prepareStatement("INSERT INTO `kicks` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `time`) VALUES (NULL, '" + target.getName() + "', '" + target.getUniqueId() + "', '" + reason + "', '" + punisherIgn +  "', '" + punisherUuid + "', CURRENT_TIMESTAMP)");
+                    pst.execute();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }
