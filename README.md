@@ -10,3 +10,7 @@
 - /checkmute (username/uuid/ip) -> punisher.checkmute
 - /alts (username/uuid/ip) -> punisher.alts
 - /kick (username) (reason) -> punisher.kick
+- /bypassban (username/uuid) -> punisher.bypassban
+- /bypassmute (username/uuid) -> punisher.bypassmute
+- /unbypassban (username/uuid) -> punisher.unbypassban
+- /unbypassmute (username/uuid) -> punisher.unbypassmute

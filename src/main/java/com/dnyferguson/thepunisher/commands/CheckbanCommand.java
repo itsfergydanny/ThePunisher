@@ -46,19 +46,79 @@ public class CheckbanCommand implements CommandExecutor {
             @Override
             public void run() {
                 try (Connection con = plugin.getSql().getDatasource().getConnection()) {
-                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `bans` WHERE `" + banType + "` = '" + target + "'");
+                    boolean bypassing = false;
+                    boolean temporary = false;
+                    boolean banned = false;
+                    String until = "";
+                    String reason = "";
+                    String date = "";
+                    String punisher = "";
+
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `users` WHERE `" + banType + "` = '" + target + "'");
                     ResultSet rs = pst.executeQuery();
-                    while(rs.next()) {
-                        if (rs.getBoolean("active")) {
-                            if (rs.getTimestamp("until") != null) {
-                                sender.sendMessage(Chat.format("&6Player: &e" + target + "\n&6Status: &cBanned\n&6Banned by: &e" + rs.getString("punisher_ign") + "\n&6Reason: &e" + rs.getString("reason") + "\n&6Date: &e" + new SimpleDateFormat("MM/dd/yyyy @ HH:mm:ss").format(rs.getTimestamp("time")) + "\n&6Expires: &e" + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("until"))));
-                            } else {
-                                sender.sendMessage(Chat.format("&6Player: &e" + target + "\n&6Status: &cBanned\n&6Banned by: &e" + rs.getString("punisher_ign") + "\n&6Reason: &e" + rs.getString("reason") + "\n&6Date: &e" + new SimpleDateFormat("MM/dd/yyyy @ HH:mm:ss").format(rs.getTimestamp("time")) + "\n&6Expires: &eNever (Permanent)"));
-                            }
-                            return;
+                    if (!rs.next()) {
+                        sender.sendMessage(Chat.format("&cPlayer not found."));
+                        return;
+                    }
+
+                    pst = con.prepareStatement("SELECT * FROM `bans` WHERE `" + banType + "` = '" + target + "' AND `active` = 1");
+                    rs = pst.executeQuery();
+                    if (rs.next()) {
+                        banned = true;
+                        reason = rs.getString("reason");
+                        date = new SimpleDateFormat("MM/dd/yyyy @ HH:mm:ss").format(rs.getTimestamp("time"));
+                        punisher = rs.getString("punisher_ign");
+                        if (rs.getTimestamp("until") != null) {
+                            temporary = true;
+                            until = new SimpleDateFormat("MM/dd/yyyy @ HH:mm:ss").format(rs.getTimestamp("until"));
+                        }
+
+                        pst = con.prepareStatement("SELECT * FROM `bypass_ban` WHERE `" + banType + "` = '" + target + "' AND `active` = 1");
+                        rs = pst.executeQuery();
+                        if (rs.next()) {
+                            bypassing = true;
                         }
                     }
-                    sender.sendMessage(Chat.format("&6Player: &e" + target + "\n&6Status: &aNot Banned"));
+                    if (banned) {
+                        StringBuilder message = new StringBuilder();
+                        message.append("&8&m------------------------------");
+                        message.append("\n");
+                        message.append("&6Player: &e");
+                        message.append(target);
+                        message.append("\n");
+                        message.append("&6Status: &cBanned");
+                        message.append("\n");
+                        message.append("&6Reason: &e");
+                        message.append(reason);
+                        message.append("\n");
+                        message.append("&6Banned by: &e");
+                        message.append(punisher);
+                        message.append("\n");
+                        message.append("&6Date: &e");
+                        message.append(date);
+                        if (temporary) {
+                            message.append("\n");
+                            message.append("&6Until by: &e");
+                            message.append(until);
+                        }
+                        message.append("\n");
+                        if (bypassing) {
+                            message.append("&6Bypassing: &aUser is bypassing ban");
+                        }
+                        message.append("\n");
+                        message.append("&8&m------------------------------");
+                        sender.sendMessage(Chat.format(message.toString()));
+                    } else {
+                        String message = "&8&m------------------------------" +
+                                "\n" +
+                                "&6Player: &e" +
+                                target +
+                                "\n" +
+                                "&6Status: &aNot Banned" +
+                                "\n" +
+                                "&8&m------------------------------";
+                        sender.sendMessage(Chat.format(message));
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

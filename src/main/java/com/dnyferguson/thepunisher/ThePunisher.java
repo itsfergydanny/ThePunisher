@@ -39,6 +39,10 @@ public final class ThePunisher extends JavaPlugin {
         getCommand("checkmute").setExecutor(new CheckmuteCommand(this));
         getCommand("alts").setExecutor(new AltsCommand(this));
         getCommand("kick").setExecutor(new KickCommand(this));
+        getCommand("bypassban").setExecutor(new BypassBanCommand(this));
+        getCommand("bypassmute").setExecutor(new BypassMuteCommand(this));
+        getCommand("unbypassban").setExecutor(new UnbypassBanCommand(this));
+        getCommand("unbypassmute").setExecutor(new UnbypassMuteCommand(this));
 
         // Iterate thru all online players to apply any mutes on reload
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -56,7 +60,7 @@ public final class ThePunisher extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        sql.closeConnections();
     }
 
     public MySQL getSql() {

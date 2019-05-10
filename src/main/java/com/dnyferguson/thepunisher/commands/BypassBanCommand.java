@@ -11,32 +11,29 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 
-public class BanCommand implements CommandExecutor {
+public class BypassBanCommand implements CommandExecutor {
 
     private ThePunisher plugin;
 
-    public BanCommand(ThePunisher plugin) {
+    public BypassBanCommand(ThePunisher plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!sender.hasPermission("punisher.ban")) {
+        if (!sender.hasPermission("punisher.bypassban")) {
             sender.sendMessage(Chat.format("&cYou don\'t have permission to do this."));
             return true;
         }
 
-        if (args.length < 2) {
-            sender.sendMessage(Chat.format("&cInvalid syntax. Use /ban (username/uuid/ip) (reason)."));
+        if (args.length < 1) {
+            sender.sendMessage(Chat.format("&cInvalid syntax. Use /bypassban (username/uuid)"));
             return true;
         }
 
         String target = args[0].replaceAll("[^0-9a-zA-Z\\.-]", "");
         String targetType = plugin.getSql().getTargetType(target);
-        String[] argList = Arrays.copyOfRange(args, 1, args.length);
-        String reason = String.join(" ", argList);
 
         String punisherIgn = "Console";
         String punisherUuid = "";
@@ -47,42 +44,34 @@ public class BanCommand implements CommandExecutor {
             punisherUuid = player.getUniqueId().toString();
         }
 
-        addBan(sender, target, targetType, reason, punisherIgn, punisherUuid);
+        addBypass(sender, target, targetType, punisherIgn, punisherUuid);
         return true;
     }
 
-    private void addBan(CommandSender sender, String target, String targetType, String reason, String punisherIgn, String punisherUUID) {
+    private void addBypass(CommandSender sender, String target, String targetType, String punisherIgn, String punisherUuid) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
                 try (Connection con = plugin.getSql().getDatasource().getConnection()) {
-                    String uuid = target;
-                    String ign = target;
-                    String ip = target;
-
-                    // Check if already banned
-                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `bans` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1");
+                    // Check if already bypassing ban
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `bypass_ban` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1");
                     ResultSet rs = pst.executeQuery();
                     if (rs.next()) {
-                        sender.sendMessage(Chat.format("&cPlayer is already banned."));
+                        sender.sendMessage(Chat.format("&cPlayer is already bypassing bans."));
                         return;
                     }
 
                     pst = con.prepareStatement("SELECT * FROM `users` WHERE `" + targetType + "` = '" + target + "'");
                     rs = pst.executeQuery();
                     if (rs.next()) {
-                        uuid = rs.getString("uuid");
-                        ign = rs.getString("ign");
-                        ip = rs.getString("ip");
-
-                        // Apply ban
-                        sender.sendMessage(Chat.format("&aSuccessfully banned " + target + " for " + reason + "!"));
+                        String ign = rs.getString("ign");
+                        String uuid = rs.getString("uuid");
+                        pst = con.prepareStatement("INSERT INTO `bypass_ban` (`id`, `ign`, `uuid`, `punisher_ign`, `punisher_uuid`, `active`, `time`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL, '" + ign + "', '" + uuid + "', '" + punisherIgn + "', '" + punisherUuid + "', '1', " + "CURRENT_TIMESTAMP, '', '', NULL)");
+                        pst.execute();
+                        sender.sendMessage(Chat.format("&aSuccessfully added " + target + " to the bypass bans list."));
+                    } else {
+                        sender.sendMessage(Chat.format("&cPlayer not found."));
                     }
-
-                    pst = con.prepareStatement("INSERT INTO `bans` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
-                            " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL," +
-                            " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, NULL, '" + ip + "', '', '', NULL)");
-                    pst.execute();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

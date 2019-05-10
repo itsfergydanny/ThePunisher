@@ -23,3 +23,11 @@ commands:
     description: Check whos sharing an ip with a player.
   kick:
     description: Kick a player.
+  bypassban:
+    description: Allow a specific player to bypass a ban.
+  bypassmute:
+    description: Allow a specific player to bypass a ban.
+  unbypassban:
+    description: Remove a player from the bypass bans list.
+  unbypassmute:
+    description: Remove a player from the bypass mutes list.

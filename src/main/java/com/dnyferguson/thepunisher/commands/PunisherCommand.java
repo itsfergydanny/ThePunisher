@@ -80,6 +80,30 @@ public class PunisherCommand implements CommandExecutor {
             message.append(listItemFormat.replace("%command%", "/kick (username) (reason)").replace("%usage%", "Kick a player."));
         }
 
+        if (sender.hasPermission("punisher.bypassban")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/bypassban (username/uuid)").replace("%usage%", "Allow a specific player to bypass a ban."));
+        }
+
+        if (sender.hasPermission("punisher.bypassmute")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/bypassuuid (username/uuid)").replace("%usage%", "Allow a specific player to bypass a mute."));
+        }
+
+        if (sender.hasPermission("punisher.unbypassban")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/unbypassban (username/uuid)").replace("%usage%", "Remove a player from the bypass bans list."));
+        }
+
+        if (sender.hasPermission("punisher.unbypassmute")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/unbypassmute (username/uuid)").replace("%usage%", "Remove a player from the bypass mutes list."));
+        }
+
 
 
 
