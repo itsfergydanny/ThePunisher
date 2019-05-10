@@ -24,7 +24,6 @@ public class PlayerSendCommand implements Listener {
     public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
         Player player = e.getPlayer();
         String command = e.getMessage().split(" ")[0];
-        System.out.println("[ThePunisher] command executed: " + command);
         if (blockedCommandsWhileMuted.contains(command)) {
             e.setCancelled(true);
             player.sendMessage(Chat.format("&cYou can\'t use that command because you are muted."));

@@ -3,7 +3,6 @@ package com.dnyferguson.thepunisher.events;
 import com.dnyferguson.thepunisher.ThePunisher;
 import com.dnyferguson.thepunisher.interfaces.UserBannedCallback;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 

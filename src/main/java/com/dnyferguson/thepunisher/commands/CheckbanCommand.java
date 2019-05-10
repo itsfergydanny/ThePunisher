@@ -66,11 +66,11 @@ public class CheckbanCommand implements CommandExecutor {
                     if (rs.next()) {
                         banned = true;
                         reason = rs.getString("reason");
-                        date = new SimpleDateFormat("MM/dd/yyyy @ HH:mm:ss").format(rs.getTimestamp("time"));
+                        date = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("time"));
                         punisher = rs.getString("punisher_ign");
                         if (rs.getTimestamp("until") != null) {
                             temporary = true;
-                            until = new SimpleDateFormat("MM/dd/yyyy @ HH:mm:ss").format(rs.getTimestamp("until"));
+                            until = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("until"));
                         }
 
                         pst = con.prepareStatement("SELECT * FROM `bypass_ban` WHERE `" + banType + "` = '" + target + "' AND `active` = 1");
@@ -98,7 +98,7 @@ public class CheckbanCommand implements CommandExecutor {
                         message.append(date);
                         if (temporary) {
                             message.append("\n");
-                            message.append("&6Until by: &e");
+                            message.append("&6Until: &e");
                             message.append(until);
                         }
                         message.append("\n");

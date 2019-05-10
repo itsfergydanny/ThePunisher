@@ -7,11 +7,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 public class MuteCommand implements CommandExecutor {
 
@@ -29,13 +28,42 @@ public class MuteCommand implements CommandExecutor {
         }
 
         if (args.length < 2) {
-            sender.sendMessage(Chat.format("&cInvalid syntax. Use /mute (username/uuid/ip) (reason)."));
+            sender.sendMessage(Chat.format("&cInvalid syntax. Use /mute (username/uuid/ip) (time [optional]) (reason).\nExample: /mute meanie 7d (reason)"));
             return true;
+        }
+
+        boolean isTemporaryPunishment = false;
+        Timestamp until = new Timestamp(new Date().getTime());
+
+        try {
+            if (args[1].endsWith("d") && Integer.parseInt(args[1].split("d")[0]) != 0) {
+                isTemporaryPunishment = true;
+                until = com.dnyferguson.thepunisher.utils.Time.getForwards(args[1]);
+            }
+            if (args[1].endsWith("h") && Integer.parseInt(args[1].split("h")[0]) != 0) {
+                isTemporaryPunishment = true;
+                until = com.dnyferguson.thepunisher.utils.Time.getForwards(args[1]);
+            }
+            if (args[1].endsWith("m") && Integer.parseInt(args[1].split("m")[0]) != 0) {
+                isTemporaryPunishment = true;
+                until = com.dnyferguson.thepunisher.utils.Time.getForwards(args[1]);
+            }
+        } catch (NumberFormatException e) {}
+
+
+        String[] argList;
+        if (isTemporaryPunishment) {
+            if (args.length < 3) {
+                sender.sendMessage(Chat.format("&cInvalid syntax. Use /mute (username/uuid/ip) (time [optional]) (reason).\nExample: /mute meanie 7d (reason)"));
+                return true;
+            }
+            argList = Arrays.copyOfRange(args, 2, args.length);
+        } else {
+            argList = Arrays.copyOfRange(args, 1, args.length);
         }
 
         String target = args[0].replaceAll("[^0-9a-zA-Z\\.-]", "");
         String targetType = plugin.getSql().getTargetType(target);
-        String[] argList = Arrays.copyOfRange(args, 1, args.length);
         String reason = String.join(" ", argList);
 
         String punisherIgn = "Console";
@@ -47,11 +75,12 @@ public class MuteCommand implements CommandExecutor {
             punisherUuid = player.getUniqueId().toString();
         }
 
-        addMute(sender, target, targetType, reason, punisherIgn, punisherUuid);
+        addMute(sender, target, targetType, reason, punisherIgn, punisherUuid, isTemporaryPunishment, until);
+
         return true;
     }
 
-    private void addMute(CommandSender sender, String target, String targetType, String reason, String punisherIgn, String punisherUUID) {
+    private void addMute(CommandSender sender, String target, String targetType, String reason, String punisherIgn, String punisherUUID, boolean isTemporaryPunishment, Timestamp until) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
@@ -74,16 +103,21 @@ public class MuteCommand implements CommandExecutor {
                         uuid = rs.getString("uuid");
                         ign = rs.getString("ign");
                         ip = rs.getString("ip");
-
-                        // Apply mute
-                        plugin.getMutedPlayers().add(uuid);
-                        sender.sendMessage(Chat.format("&aSuccessfully muted " + target + " for " + reason + "!"));
                     }
 
-                    pst = con.prepareStatement("INSERT INTO `mutes` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
-                            " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL," +
-                            " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, NULL, '" + ip + "', '', '', NULL)");
-                    pst.execute();
+                    if (isTemporaryPunishment) {
+                        pst = con.prepareStatement("INSERT INTO `mutes` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
+                                " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL," +
+                                " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, '" + until + "', '" + ip + "', '', '', NULL)");
+                        pst.execute();
+                        sender.sendMessage(Chat.format("&aSuccessfully muted " + target + " for " + reason + " until " + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + "!"));
+                    } else {
+                        pst = con.prepareStatement("INSERT INTO `mutes` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
+                                " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL," +
+                                " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, NULL, '" + ip + "', '', '', NULL)");
+                        pst.execute();
+                        sender.sendMessage(Chat.format("&aSuccessfully muted " + target + " for " + reason + "!"));
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

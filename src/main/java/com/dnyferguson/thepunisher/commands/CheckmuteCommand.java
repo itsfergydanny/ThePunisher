@@ -98,7 +98,7 @@ public class CheckmuteCommand implements CommandExecutor {
                         message.append(date);
                         if (temporary) {
                             message.append("\n");
-                            message.append("&6Until by: &e");
+                            message.append("&6Until: &e");
                             message.append(until);
                         }
                         message.append("\n");

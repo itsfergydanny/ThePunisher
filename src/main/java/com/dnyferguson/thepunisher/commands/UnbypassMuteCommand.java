@@ -33,7 +33,6 @@ public class UnbypassMuteCommand implements CommandExecutor {
         }
 
         String target = args[0].replaceAll("[^0-9a-zA-Z\\.-]", "");
-
         String targetType = plugin.getSql().getTargetType(target);
 
         unbypass(target, targetType, sender);

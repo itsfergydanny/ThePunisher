@@ -35,7 +35,7 @@ public class PunisherCommand implements CommandExecutor {
         if (sender.hasPermission("punisher.ban")) {
             availableCommands++;
             message.append("\n");
-            message.append(listItemFormat.replace("%command%", "/ban (username/uuid/ip) (reason)").replace("%usage%", "Permanently ban a player."));
+            message.append(listItemFormat.replace("%command%", "/ban (username/uuid/ip) (time [optional]) (reason)").replace("%usage%", "Permanently ban a player."));
         }
 
         if (sender.hasPermission("punisher.unban")) {
@@ -53,7 +53,7 @@ public class PunisherCommand implements CommandExecutor {
         if (sender.hasPermission("punisher.mute")) {
             availableCommands++;
             message.append("\n");
-            message.append(listItemFormat.replace("%command%", "/mute (username/uuid/ip) (reason)").replace("%usage%", "Mute a player."));
+            message.append(listItemFormat.replace("%command%", "/mute (username/uuid/ip) (time [optional]) (reason)").replace("%usage%", "Mute a player."));
         }
 
         if (sender.hasPermission("punisher.unmute")) {
@@ -102,6 +102,12 @@ public class PunisherCommand implements CommandExecutor {
             availableCommands++;
             message.append("\n");
             message.append(listItemFormat.replace("%command%", "/unbypassmute (username/uuid)").replace("%usage%", "Remove a player from the bypass mutes list."));
+        }
+
+        if (sender.hasPermission("punisher.iphistory")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/iphistory (username/uuid)").replace("%usage%", "Check a player\'s ip history."));
         }
 
 

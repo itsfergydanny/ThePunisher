@@ -31,3 +31,5 @@ commands:
     description: Remove a player from the bypass bans list.
   unbypassmute:
     description: Remove a player from the bypass mutes list.
+  iphistory:
+    description: Check a player's ip history.
