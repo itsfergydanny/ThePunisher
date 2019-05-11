@@ -122,6 +122,12 @@ public class PunisherCommand implements CommandExecutor {
             message.append(listItemFormat.replace("%command%", "/staffrollback (username/uuid) (bans/warns/mutes/all) (time)").replace("%usage%", "Roll back a staff member\'s actions."));
         }
 
+        if (sender.hasPermission("punisher.unwarn")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/unwarn (username/uuid)").replace("%usage%", "Removes a players last warn."));
+        }
+
 
 
 
