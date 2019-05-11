@@ -48,7 +48,10 @@ public class MuteCommand implements CommandExecutor {
                 isTemporaryPunishment = true;
                 until = com.dnyferguson.thepunisher.utils.Time.getForwards(args[1]);
             }
-        } catch (NumberFormatException e) {}
+        } catch (NumberFormatException e) {
+            sender.sendMessage(Chat.format("&cInvalid syntax. Use /mute (username/uuid/ip) (time [optional]) (reason).\nExample: /mute meanie 7d (reason)"));
+            return true;
+        }
 
 
         String[] argList;

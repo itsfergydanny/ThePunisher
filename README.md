@@ -16,3 +16,4 @@
 - /unbypassmute (username/uuid) -> punisher.unbypassmute
 - /iphistory (username/uuid) -> punisher.iphistory
 - /warn (username/uuid) (warning) -> punisher.warn
+- /staffrollback (username/uuid) (bans/warns/mutes/all) (time) -> punisher.staffrollback

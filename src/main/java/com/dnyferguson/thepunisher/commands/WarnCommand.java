@@ -59,7 +59,7 @@ public class WarnCommand implements CommandExecutor {
         }
 
         addWarn(sender, target, targetType, reason, punisherIgn, punisherUuid);
-        return false;
+        return true;
     }
 
     private void addWarn(CommandSender sender, String target, String targetType, String reason, String punisherIgn, String punisherUUID) {

@@ -35,3 +35,5 @@ commands:
     description: Check a player's ip history.
   warn:
     description: Issue a warning to a player.
+  staffrollback:
+    description: Roll back a staff member's actions.
