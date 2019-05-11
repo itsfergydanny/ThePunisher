@@ -22,10 +22,20 @@ public class Time {
         int minutes = inputToMinutes(input);
 
         Timestamp timestamp = new Timestamp(new Date().getTime());
-        System.out.println(timestamp);
 
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(timestamp.getTime());
+
+        // remove minutes
+        cal.add(Calendar.MINUTE, -minutes);
+        return new Timestamp(cal.getTime().getTime());
+    }
+
+    public static Timestamp getBackwards(Timestamp time, String input) {
+        int minutes = inputToMinutes(input);
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(time.getTime());
 
         // remove minutes
         cal.add(Calendar.MINUTE, -minutes);

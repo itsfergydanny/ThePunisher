@@ -62,6 +62,10 @@ public class MySQL {
             // Create bypass mute
             pst = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + database + "`.`bypass_mute` ( `id` INT NOT NULL AUTO_INCREMENT , `ign` VARCHAR(16) NOT NULL , `uuid` VARCHAR(36) NOT NULL , `punisher_ign` VARCHAR(16) NOT NULL , `punisher_uuid` VARCHAR(36) NOT NULL , `active` BOOLEAN NOT NULL DEFAULT TRUE , `time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP , `remover_ign` VARCHAR(16) NOT NULL , `remover_uuid` VARCHAR(36) NOT NULL , `removed_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`)) ENGINE = InnoDB;");
             pst.execute();
+
+            // Create bans table
+            pst = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + database + "`.`warns` ( `id` INT NOT NULL AUTO_INCREMENT , `ign` VARCHAR(16) NOT NULL , `uuid` VARCHAR(36) NOT NULL , `reason` VARCHAR(1024) NOT NULL , `punisher_ign` VARCHAR(16) NOT NULL , `punisher_uuid` VARCHAR(36) NOT NULL , `active` BOOLEAN NOT NULL DEFAULT TRUE , `time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP , `until` TIMESTAMP NULL , `ip` VARCHAR(50) NOT NULL , `remover_ign` VARCHAR(16) NOT NULL , `remover_uuid` VARCHAR(36) NOT NULL , `removed_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`)) ENGINE = InnoDB;");
+            pst.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }

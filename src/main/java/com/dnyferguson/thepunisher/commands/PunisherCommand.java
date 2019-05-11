@@ -110,6 +110,12 @@ public class PunisherCommand implements CommandExecutor {
             message.append(listItemFormat.replace("%command%", "/iphistory (username/uuid)").replace("%usage%", "Check a player\'s ip history."));
         }
 
+        if (sender.hasPermission("punisher.warn")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/warn (username/uuid) (reason)").replace("%usage%", "Issue a warning to a player."));
+        }
+
 
 
 
