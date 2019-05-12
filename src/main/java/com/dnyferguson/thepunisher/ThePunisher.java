@@ -6,6 +6,7 @@ import com.dnyferguson.thepunisher.events.PlayerChat;
 import com.dnyferguson.thepunisher.events.PlayerLogin;
 import com.dnyferguson.thepunisher.events.PlayerSendCommand;
 import com.dnyferguson.thepunisher.interfaces.UserIsPunishedCallback;
+import com.dnyferguson.thepunisher.redis.Redis;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -17,6 +18,7 @@ import java.util.Set;
 public final class ThePunisher extends JavaPlugin {
 
     private MySQL sql;
+    private Redis redis;
     private Set<String> mutedPlayers = new HashSet<>();
 
     @Override
@@ -24,6 +26,7 @@ public final class ThePunisher extends JavaPlugin {
         saveDefaultConfig();
 
         sql = new MySQL(this);
+        redis = new Redis(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerLogin(this), this);
@@ -65,13 +68,20 @@ public final class ThePunisher extends JavaPlugin {
     @Override
     public void onDisable() {
         sql.closeConnections();
+        redis.closeConnections();
     }
 
     public MySQL getSql() {
         return sql;
     }
 
+    public Redis getRedis() {
+        return redis;
+    }
+
     public Set<String> getMutedPlayers() {
         return mutedPlayers;
     }
+
+
 }

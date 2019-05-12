@@ -9,10 +9,12 @@ import org.bukkit.entity.Player;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class KickCommand implements CommandExecutor {
 
@@ -36,7 +38,9 @@ public class KickCommand implements CommandExecutor {
             return true;
         }
 
-        Player target = plugin.getServer().getPlayer(args[0]);
+        String target = args[0];
+        String targetType = plugin.getSql().getTargetType(target);
+
         String[] argList = Arrays.copyOfRange(args, 1, args.length);
         String reason = String.join(" ", argList);
 
@@ -49,34 +53,44 @@ public class KickCommand implements CommandExecutor {
             punisherUuid = player.getUniqueId().toString();
         }
 
-        if (target != null) {
-            boolean shouldLog = true;
-            target.kickPlayer(Chat.format("&cYou have been kicked for: " + reason));
-            sender.sendMessage(Chat.format("&aYou have succesfully kicked " + target.getName() + " for " + reason + "!"));
+        boolean shouldLog = true;
 
-            for (String str : dontLogReasons) {
-                if (reason.contains(str)) {
-                    shouldLog = false;
-                }
+        for (String str : dontLogReasons) {
+            if (reason.contains(str)) {
+                shouldLog = false;
             }
-
-            if (shouldLog) {
-                log(target, reason, punisherIgn, punisherUuid);
-            }
-            return true;
         }
 
-        sender.sendMessage(Chat.format("&cPlayer not found."));
+        kick(target, targetType, reason, punisherIgn, punisherUuid, shouldLog, sender);
         return true;
     }
 
-    private void log(Player target, String reason, String punisherIgn, String punisherUuid) {
+    private void kick(String target, String targetType, String reason, String punisherIgn, String punisherUuid, boolean shouldLog, CommandSender sender) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
                 try (Connection con = plugin.getSql().getDatasource().getConnection()) {
-                    PreparedStatement pst = con.prepareStatement("INSERT INTO `kicks` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `time`) VALUES (NULL, '" + target.getName() + "', '" + target.getUniqueId() + "', '" + reason + "', '" + punisherIgn +  "', '" + punisherUuid + "', CURRENT_TIMESTAMP)");
-                    pst.execute();
+                    String uuid = target;
+                    String ign = target;
+                    String ip = target;
+
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `users` WHERE `" + targetType + "` = '" + target + "'");
+                    ResultSet rs = pst.executeQuery();
+                    if (rs.next()) {
+                        uuid = rs.getString("uuid");
+                        ign = rs.getString("ign");
+                    } else {
+                        sender.sendMessage(Chat.format("&cPlayer not found."));
+                        return;
+                    }
+
+                    plugin.getRedis().sendMessage("kick " + uuid + " " + reason);
+                    sender.sendMessage(Chat.format("&aYou have succesfully kicked " + target + " for " + reason + "!"));
+
+                    if (shouldLog) {
+                        pst = con.prepareStatement("INSERT INTO `kicks` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `time`) VALUES (NULL, '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn +  "', '" + punisherUuid + "', CURRENT_TIMESTAMP)");
+                        pst.execute();
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

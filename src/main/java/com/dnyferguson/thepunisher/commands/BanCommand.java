@@ -48,10 +48,7 @@ public class BanCommand implements CommandExecutor {
                 isTemporaryPunishment = true;
                 until = com.dnyferguson.thepunisher.utils.Time.getForwards(args[1]);
             }
-        } catch (NumberFormatException e) {
-            sender.sendMessage(Chat.format("&cInvalid syntax. Use /ban (username/uuid/ip) (time [optional]) (reason).\nExample: /ban meanie 7d (reason)"));
-            return true;
-        }
+        } catch (NumberFormatException e) {}
 
 
         String[] argList;
@@ -121,6 +118,7 @@ public class BanCommand implements CommandExecutor {
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully banned " + target + " for " + reason + "!"));
                     }
+                    plugin.getRedis().sendMessage("ban " + uuid + " " + reason);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

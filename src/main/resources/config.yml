@@ -12,6 +12,12 @@ mysql:
   password: 'password'
   database: 'thepunisher'
 
+# Configure your Redis settings
+redis:
+  ip: '127.0.0.1'
+  port: '6379'
+  password: ''
+
 # Configure global system settings here
 
 #
