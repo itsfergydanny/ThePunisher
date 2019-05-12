@@ -118,7 +118,7 @@ public class BanCommand implements CommandExecutor {
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully banned " + target + " for " + reason + "!"));
                     }
-                    plugin.getRedis().sendMessage("ban " + uuid + " " + reason);
+                    plugin.getRedis().sendMessage("ban/" + uuid + "/" + reason);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

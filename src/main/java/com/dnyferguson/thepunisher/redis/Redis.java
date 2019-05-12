@@ -9,13 +9,13 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 
-import java.time.Duration;
 import java.util.UUID;
 
 public class Redis {
 
     private ThePunisher plugin;
     private JedisPool jedisPool;
+    private JedisPubSub pubSub;
 
     public Redis(ThePunisher plugin) {
         this.plugin = plugin;
@@ -36,7 +36,7 @@ public class Redis {
     }
 
     public void sendMessage(String message) {
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
             @Override
             public void run() {
                 try (Jedis jedis = jedisPool.getResource()) {
@@ -51,11 +51,11 @@ public class Redis {
             @Override
             public void run() {
                 try (Jedis jedis = jedisPool.getResource()) {
-                    jedis.subscribe(new JedisPubSub() {
+                    jedis.subscribe(pubSub = new JedisPubSub() {
                         @Override
                         public void onMessage(String channel, String message) {
                             System.out.println("Received jedis message: " + message);
-                            String[] args = message.split(" ");
+                            String[] args = message.split("/");
                             if (args[0].equals("ban")) {
                                 String target = args[1];
                                 String reason = args[2];
@@ -90,7 +90,7 @@ public class Redis {
     }
 
     public void closeConnections() {
-        this.jedisPool.destroy();
+        pubSub.unsubscribe();
     }
 
     private JedisPoolConfig buildPoolConfig() {

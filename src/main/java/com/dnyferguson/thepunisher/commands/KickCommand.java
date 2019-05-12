@@ -14,7 +14,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class KickCommand implements CommandExecutor {
 
@@ -84,7 +83,7 @@ public class KickCommand implements CommandExecutor {
                         return;
                     }
 
-                    plugin.getRedis().sendMessage("kick " + uuid + " " + reason);
+                    plugin.getRedis().sendMessage("kick/" + uuid + "/" + reason);
                     sender.sendMessage(Chat.format("&aYou have succesfully kicked " + target + " for " + reason + "!"));
 
                     if (shouldLog) {
