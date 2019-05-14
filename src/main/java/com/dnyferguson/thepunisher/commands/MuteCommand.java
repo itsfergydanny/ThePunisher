@@ -111,14 +111,16 @@ public class MuteCommand implements CommandExecutor {
                                 " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL," +
                                 " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, '" + until + "', '" + ip + "', '', '', NULL)");
                         pst.execute();
-                        sender.sendMessage(Chat.format("&aSuccessfully muted " + target + " for " + reason + " until " + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + "!"));
-                        notifyPlayer(target, reason, new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until));
+                        sender.sendMessage(Chat.format("&aSuccessfully muted " + target + " for " + reason + " until " + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + " EST!"));
+                        plugin.getMutedPlayers().add(uuid);
+                        notifyPlayer(target, reason, new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + " EST");
                     } else {
                         pst = con.prepareStatement("INSERT INTO `mutes` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
                                 " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL," +
                                 " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, NULL, '" + ip + "', '', '', NULL)");
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully muted " + target + " for " + reason + "!"));
+                        plugin.getMutedPlayers().add(uuid);
                         notifyPlayer(target, reason);
                     }
                 } catch (SQLException e) {

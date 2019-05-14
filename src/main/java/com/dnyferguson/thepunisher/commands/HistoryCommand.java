@@ -65,7 +65,7 @@ public class HistoryCommand implements CommandExecutor {
                         String reason = rs.getString("reason");
                         String punisherIgn = rs.getString("punisher_ign");
                         boolean active = rs.getBoolean("active");
-                        String time = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("time"));
+                        String time = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("time")) + " EST";
 
                         message.append("&cBanned on ");
                         message.append(time);
@@ -76,7 +76,7 @@ public class HistoryCommand implements CommandExecutor {
                         message.append("&c.\n");
 
                         if (!active) {
-                            String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time"));
+                            String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
                             String removerIgn = rs.getString("remover_ign");
                             message.append("&aUnbanned on ");
                             message.append(removedTime);
@@ -100,7 +100,7 @@ public class HistoryCommand implements CommandExecutor {
                         String reason = rs.getString("reason");
                         String punisherIgn = rs.getString("punisher_ign");
                         boolean active = rs.getBoolean("active");
-                        String time = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("time"));
+                        String time = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("time")) + " EST";
 
                         message.append("&cMuted on ");
                         message.append(time);
@@ -111,7 +111,7 @@ public class HistoryCommand implements CommandExecutor {
                         message.append("&c.\n");
 
                         if (!active) {
-                            String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time"));
+                            String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
                             String removerIgn = rs.getString("remover_ign");
                             message.append("&aUnmuted on ");
                             message.append(removedTime);
@@ -135,7 +135,7 @@ public class HistoryCommand implements CommandExecutor {
                         String reason = rs.getString("reason");
                         String punisherIgn = rs.getString("punisher_ign");
                         boolean active = rs.getBoolean("active");
-                        String time = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("time"));
+                        String time = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("time")) + " EST";
 
                         message.append("&cWarned on ");
                         message.append(time);
@@ -146,7 +146,7 @@ public class HistoryCommand implements CommandExecutor {
                         message.append("&c.\n");
 
                         if (!active) {
-                            String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time"));
+                            String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
                             String removerIgn = rs.getString("remover_ign");
                             message.append("&aUnwarned on ");
                             message.append(removedTime);
@@ -169,7 +169,7 @@ public class HistoryCommand implements CommandExecutor {
                         count++;
                         String reason = rs.getString("reason");
                         String punisherIgn = rs.getString("punisher_ign");
-                        String time = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("time"));
+                        String time = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("time")) + " EST";
 
                         message.append("&cWarned on ");
                         message.append(time);

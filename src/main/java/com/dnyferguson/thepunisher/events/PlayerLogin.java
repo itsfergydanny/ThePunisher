@@ -2,11 +2,13 @@ package com.dnyferguson.thepunisher.events;
 
 import com.dnyferguson.thepunisher.ThePunisher;
 import com.dnyferguson.thepunisher.interfaces.UserBannedCallback;
+import com.dnyferguson.thepunisher.utils.Chat;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 
 public class PlayerLogin implements Listener {
 
@@ -25,13 +27,13 @@ public class PlayerLogin implements Listener {
         checkUser(username, uuid, ip, new UserBannedCallback() {
             @Override
             public void denyLogin(String punisher, String reason) {
-                String message = "perm ban";
+                String message = Chat.format("\n&cYou have been permanently banned for: \n&7" + reason + "&c.\n \n &aAppeal at bit.ly/mmt-appeal or by emailing support@momentonetwork.net\nOR\n Purchase an instant unban at bit.ly/mmt-buyunban");
                 e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, message);
             }
 
             @Override
             public void denyLogin(String punisher, String reason, Timestamp until) {
-                String message = "temp ban";
+                String message = Chat.format("\n&cYou have been temporarily banned for: \n&7" + reason + "&c.\n \n&eExpires: " + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + " EST\n \n &aAppeal at bit.ly/mmt-appeal or by emailing support@momentonetwork.net\nOR\n Purchase an instant unban at bit.ly/mmt-buyunban");
                 e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, message);
             }
         });
@@ -39,51 +41,72 @@ public class PlayerLogin implements Listener {
 
     private void checkUser(String username, String uuid, String ip, UserBannedCallback callback) {
         try (Connection con = plugin.getSql().getDatasource().getConnection()) {
-            // Check if ip is banned first
-            PreparedStatement pst = con.prepareStatement("SELECT * FROM `bans` WHERE `ip` = '" + ip + "'");
+            boolean bypassBan = false;
+            boolean bypassMute = false;
+
+            // Let in if in bypassban
+            PreparedStatement pst = con.prepareStatement("SELECT * FROM `bypass_ban` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
             ResultSet rs = pst.executeQuery();
-            while (rs.next()) {
-                if (rs.getBoolean("active")) {
-                    if (rs.getTimestamp("until") != null) {
-                        callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("time"));
-                    }
-                    callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"));
-                    return;
-                }
+            if (rs.next()) {
+                bypassBan = true;
             }
-            // Then check if uuid is present and if its banned or not
-            pst = con.prepareStatement("SELECT * FROM `bans` WHERE `uuid` = '" + uuid + "'");
+
+            // Check if ip is banned
+            pst = con.prepareStatement("SELECT * FROM `bans` WHERE `ip` = '" + ip + "' AND `active` = 1");
             rs = pst.executeQuery();
-            while (rs.next()) {
-                if (rs.getBoolean("active")) {
+            if (rs.next()) {
+                if (!bypassBan) {
                     if (rs.getTimestamp("until") != null) {
-                        callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("time"));
+                        callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("until"));
+                        return;
                     }
                     callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"));
                     return;
                 }
             }
 
-            // Check if ip is muted first
-            pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `ip` = '" + ip + "'");
+            // Check if uuid is banned
+            pst = con.prepareStatement("SELECT * FROM `bans` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
             rs = pst.executeQuery();
-            while (rs.next()) {
-                if (rs.getBoolean("active")) {
-                    plugin.getMutedPlayers().add(uuid);
+            if (rs.next()) {
+                if (!bypassBan) {
+                    if (rs.getTimestamp("until") != null) {
+                        callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("until"));
+                        return;
+                    }
+                    callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"));
                     return;
                 }
             }
-            // Then check if uuid is present and if its muted or not
-            pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `uuid` = '" + uuid + "'");
+
+            // let thru if bypassmute
+            pst = con.prepareStatement("SELECT * FROM `bypass_mute` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
             rs = pst.executeQuery();
-            while (rs.next()) {
-                if (rs.getBoolean("active")) {
+            if (rs.next()) {
+                bypassMute = true;
+            }
+
+            // Check if ip is muted
+            pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `ip` = '" + ip + "' AND `active` = 1");
+            rs = pst.executeQuery();
+            if (rs.next()) {
+                if (!bypassMute) {
                     plugin.getMutedPlayers().add(uuid);
                     return;
                 }
             }
 
-            // Check if user exists, if so update ign and ip. If not, create.
+            // Check if uuid is muted
+            pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
+            rs = pst.executeQuery();
+            if (rs.next()) {
+                if (!bypassMute) {
+                    plugin.getMutedPlayers().add(uuid);
+                    return;
+                }
+            }
+
+            // Update ign & last ip
             pst = con.prepareStatement("SELECT * FROM `users` WHERE `uuid` = '" + uuid + "'");
             rs = pst.executeQuery();
             if (rs.next()) {
@@ -93,6 +116,7 @@ public class PlayerLogin implements Listener {
                 pst = con.prepareStatement("INSERT INTO `users` (`id`, `ign`, `uuid`, `ip`) VALUES (NULL, '" + username + "', '" + uuid + "', '" + ip + "')");
                 pst.execute();
             }
+
             // Add login to history
             pst = con.prepareStatement("INSERT INTO `logins` (`id`, `ign`, `uuid`, `ip`, `time`) VALUES (NULL, '" + username + "', '" + uuid + "', '" + ip + "', CURRENT_TIMESTAMP)");
             pst.execute();

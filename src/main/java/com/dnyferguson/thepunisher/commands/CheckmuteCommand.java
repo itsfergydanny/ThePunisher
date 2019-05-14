@@ -66,11 +66,11 @@ public class CheckmuteCommand implements CommandExecutor {
                     if (rs.next()) {
                         muted = true;
                         reason = rs.getString("reason");
-                        date = new SimpleDateFormat("MM/dd/yyyy @ HH:mm:ss").format(rs.getTimestamp("time"));
+                        date = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("time")) + " EST";
                         punisher = rs.getString("punisher_ign");
                         if (rs.getTimestamp("until") != null) {
                             temporary = true;
-                            until = new SimpleDateFormat("MM/dd/yyyy @ HH:mm:ss").format(rs.getTimestamp("until"));
+                            until = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("until")) + " EST";
                         }
 
                         pst = con.prepareStatement("SELECT * FROM `bypass_mute` WHERE `" + muteType + "` = '" + target + "' AND `active` = 1");
