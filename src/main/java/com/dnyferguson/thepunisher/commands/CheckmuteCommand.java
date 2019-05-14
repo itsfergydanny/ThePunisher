@@ -54,15 +54,8 @@ public class CheckmuteCommand implements CommandExecutor {
                     String date = "";
                     String punisher = "";
 
-                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `users` WHERE `" + muteType + "` = '" + target + "'");
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `" + muteType + "` = '" + target + "' AND `active` = 1");
                     ResultSet rs = pst.executeQuery();
-                    if (!rs.next()) {
-                        sender.sendMessage(Chat.format("&cPlayer not found."));
-                        return;
-                    }
-
-                    pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `" + muteType + "` = '" + target + "' AND `active` = 1");
-                    rs = pst.executeQuery();
                     if (rs.next()) {
                         muted = true;
                         reason = rs.getString("reason");

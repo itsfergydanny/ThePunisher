@@ -12,6 +12,15 @@ mysql:
   password: 'password'
   database: 'thepunisher'
 
+# Configure your litebans MySQL settings if you want to import punishments
+litebans-mysql:
+  ip: '127.0.0.1'
+  port: '3306'
+  username: 'username'
+  password: 'password'
+  database: 'litebans'
+
+
 # Configure your Redis settings
 redis:
   ip: '127.0.0.1'

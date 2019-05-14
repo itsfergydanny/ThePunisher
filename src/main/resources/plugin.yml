@@ -41,3 +41,5 @@ commands:
     description: Removes a players last warn.
   history:
     description: View a players recent punishments.
+  litebansimport:
+    description: Console only import command to import from litebans.

@@ -9,6 +9,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class PlayerLogin implements Listener {
 
@@ -56,9 +57,16 @@ public class PlayerLogin implements Listener {
             rs = pst.executeQuery();
             if (rs.next()) {
                 if (!bypassBan) {
-                    if (rs.getTimestamp("until") != null) {
-                        callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("until"));
-                        return;
+                    Timestamp now = new Timestamp(new Date().getTime());
+                    Timestamp until = rs.getTimestamp("until");
+                    if (until != null) {
+                        if (now.getTime() > until.getTime()) {
+                            pst = con.prepareStatement("UPDATE `bans` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `ip` = '" + ip + "'");
+                            pst.execute();
+                        } else {
+                            callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("until"));
+                            return;
+                        }
                     }
                     callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"));
                     return;
@@ -70,9 +78,16 @@ public class PlayerLogin implements Listener {
             rs = pst.executeQuery();
             if (rs.next()) {
                 if (!bypassBan) {
-                    if (rs.getTimestamp("until") != null) {
-                        callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("until"));
-                        return;
+                    Timestamp now = new Timestamp(new Date().getTime());
+                    Timestamp until = rs.getTimestamp("until");
+                    if (until != null) {
+                        if (now.getTime() > until.getTime()) {
+                            pst = con.prepareStatement("UPDATE `bans` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "'");
+                            pst.execute();
+                        } else {
+                            callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("until"));
+                            return;
+                        }
                     }
                     callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"));
                     return;

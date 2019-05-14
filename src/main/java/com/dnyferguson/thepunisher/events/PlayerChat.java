@@ -42,7 +42,7 @@ public class PlayerChat implements Listener {
                         Timestamp until = rs.getTimestamp("until");
                         if (until != null) {
                             if (now.getTime() > until.getTime()) {
-                                pst = con.prepareStatement("UPDATE `mutes` SET `active`=0 WHERE `uuid` = '" + uuid + "'");
+                                pst = con.prepareStatement("UPDATE `mutes` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "'");
                                 pst.execute();
                                 plugin.getMutedPlayers().remove(uuid);
                                 player.sendMessage(Chat.format("&aYour mute has expired and you can now speak again!"));

@@ -99,19 +99,17 @@ public class WarnCommand implements CommandExecutor {
                     pst = con.prepareStatement("SELECT * FROM `warns` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1 ORDER BY `time` DESC LIMIT 100");
                     rs = pst.executeQuery();
                     while (rs.next()) {
-                        Timestamp time = rs.getTimestamp("time");
+                        Timestamp until = rs.getTimestamp("until");
                         int id = rs.getInt("id");
-                        if (now.getTime() - (86400000 * 7) >= time.getTime()) {
-//                            sender.sendMessage("Punishment of id " + id + " is expired (older than 7 days)");
-//                            sender.sendMessage("Difference is : " + (now.getTime() - time.getTime()) / 86400000 + " days.");
-                            pst = con.prepareStatement("UPDATE `warns` SET `active`='0' WHERE `id` = '" + id + "'");
+                        if (now.getTime() > until.getTime()) {
+                            pst = con.prepareStatement("UPDATE `warns` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `id` = '" + id + "'");
                             pst.execute();
                         }
                     }
 
                     pst = con.prepareStatement("INSERT INTO `warns` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
                             " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL," +
-                            " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, NULL, '" + ip + "', '', '', NULL)");
+                            " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, '" + com.dnyferguson.thepunisher.utils.Time.getForwards("7d") + "', '" + ip + "', '', '', NULL)");
                     pst.execute();
                     sender.sendMessage(Chat.format("&aSuccessfully warned " + target + " for " + reason + "!"));
 

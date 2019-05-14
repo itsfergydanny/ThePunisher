@@ -76,13 +76,20 @@ public class HistoryCommand implements CommandExecutor {
                         message.append("&c.\n");
 
                         if (!active) {
-                            String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
-                            String removerIgn = rs.getString("remover_ign");
-                            message.append("&aUnbanned on ");
-                            message.append(removedTime);
-                            message.append(" by &7");
-                            message.append(removerIgn);
-                            message.append("&a.\n");
+                            if (rs.getString("remover_ign").equals("#expired") || rs.getString("remover_ign").isEmpty()) {
+                                String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("until")) + " EST";
+                                message.append("&aExpired on ");
+                                message.append(removedTime);
+                                message.append("&a.\n");
+                            } else {
+                                String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
+                                String removerIgn = rs.getString("remover_ign");
+                                message.append("&aUnbanned on ");
+                                message.append(removedTime);
+                                message.append(" by &7");
+                                message.append(removerIgn);
+                                message.append("&a.\n");
+                            }
                         }
                     }
 
@@ -111,13 +118,20 @@ public class HistoryCommand implements CommandExecutor {
                         message.append("&c.\n");
 
                         if (!active) {
-                            String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
-                            String removerIgn = rs.getString("remover_ign");
-                            message.append("&aUnmuted on ");
-                            message.append(removedTime);
-                            message.append(" by &7");
-                            message.append(removerIgn);
-                            message.append("&a.\n");
+                            if (rs.getString("remover_ign").equals("#expired") || rs.getString("remover_ign").isEmpty()) {
+                                String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("until")) + " EST";
+                                message.append("&aExpired on ");
+                                message.append(removedTime);
+                                message.append("&a.\n");
+                            } else {
+                                String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
+                                String removerIgn = rs.getString("remover_ign");
+                                message.append("&aUnmuted on ");
+                                message.append(removedTime);
+                                message.append(" by &7");
+                                message.append(removerIgn);
+                                message.append("&a.\n");
+                            }
                         }
                     }
 
@@ -146,13 +160,20 @@ public class HistoryCommand implements CommandExecutor {
                         message.append("&c.\n");
 
                         if (!active) {
-                            String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
-                            String removerIgn = rs.getString("remover_ign");
-                            message.append("&aUnwarned on ");
-                            message.append(removedTime);
-                            message.append(" by &7");
-                            message.append(removerIgn);
-                            message.append("&a.\n");
+                            if (rs.getString("remover_ign").equals("#expired") || rs.getString("remover_ign").isEmpty()) {
+                                String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("until")) + " EST";
+                                message.append("&aExpired on ");
+                                message.append(removedTime);
+                                message.append("&a.\n");
+                            } else {
+                                String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
+                                String removerIgn = rs.getString("remover_ign");
+                                message.append("&aUnwarned on ");
+                                message.append(removedTime);
+                                message.append(" by &7");
+                                message.append(removerIgn);
+                                message.append("&a.\n");
+                            }
                         }
                     }
 

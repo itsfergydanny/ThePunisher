@@ -20,6 +20,7 @@ public final class ThePunisher extends JavaPlugin {
     private MySQL sql;
     private Redis redis;
     private Set<String> mutedPlayers = new HashSet<>();
+    private ImportCommand importer;
 
     @Override
     public void onEnable() {
@@ -51,6 +52,7 @@ public final class ThePunisher extends JavaPlugin {
         getCommand("staffrollback").setExecutor(new StaffRollbackCommand(this));
         getCommand("unwarn").setExecutor(new UnWarnCommand(this));
         getCommand("history").setExecutor(new HistoryCommand(this));
+        getCommand("litebansimport").setExecutor(importer = new ImportCommand(this));
 
         // Iterate thru all online players to apply any mutes on reload
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -70,6 +72,7 @@ public final class ThePunisher extends JavaPlugin {
     public void onDisable() {
         sql.closeConnections();
         redis.closeConnections();
+        importer.closeConnections();
     }
 
     public MySQL getSql() {
