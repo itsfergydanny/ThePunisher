@@ -2,6 +2,7 @@ package com.dnyferguson.thepunisher.commands;
 
 import com.dnyferguson.thepunisher.ThePunisher;
 import com.dnyferguson.thepunisher.utils.Chat;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -133,6 +134,12 @@ public class WarnCommand implements CommandExecutor {
                         }
                     }
 
+                    if (punishmentCommand.isEmpty()) {
+                        notifyPlayer(target, reason);
+                        return;
+                    }
+
+                    notifyPlayer(target, reason);
                     dispatchCommand(punishmentCommand);
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -146,6 +153,18 @@ public class WarnCommand implements CommandExecutor {
             @Override
             public void run() {
                 plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
+            }
+        });
+    }
+
+    private void notifyPlayer(String target, String reason) {
+        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                Player player = Bukkit.getPlayer(target);
+                if (player != null) {
+                    player.sendMessage(Chat.format("&cYou have been warned for &7" + reason + "&c. If you keep this up more severe punishments will follow."));
+                }
             }
         });
     }

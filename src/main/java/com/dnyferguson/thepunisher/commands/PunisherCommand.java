@@ -128,6 +128,12 @@ public class PunisherCommand implements CommandExecutor {
             message.append(listItemFormat.replace("%command%", "/unwarn (username/uuid)").replace("%usage%", "Removes a players last warn."));
         }
 
+        if (sender.hasPermission("punisher.history")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/history (username/uuid) (limit [optional])").replace("%usage%", "View a players recent punishments."));
+        }
+
 
 
 

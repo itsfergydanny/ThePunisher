@@ -2,6 +2,7 @@ package com.dnyferguson.thepunisher.commands;
 
 import com.dnyferguson.thepunisher.ThePunisher;
 import com.dnyferguson.thepunisher.utils.Chat;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -111,15 +112,41 @@ public class MuteCommand implements CommandExecutor {
                                 " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, '" + until + "', '" + ip + "', '', '', NULL)");
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully muted " + target + " for " + reason + " until " + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + "!"));
+                        notifyPlayer(target, reason, new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until));
                     } else {
                         pst = con.prepareStatement("INSERT INTO `mutes` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
                                 " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL," +
                                 " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, NULL, '" + ip + "', '', '', NULL)");
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully muted " + target + " for " + reason + "!"));
+                        notifyPlayer(target, reason);
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void notifyPlayer(String target, String reason) {
+        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                Player player = Bukkit.getPlayer(target);
+                if (player != null) {
+                    player.sendMessage(Chat.format("&cYou have been permanently muted for &7" + reason + "&c."));
+                }
+            }
+        });
+    }
+
+    private void notifyPlayer(String target, String reason, String until) {
+        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                Player player = Bukkit.getPlayer(target);
+                if (player != null) {
+                    player.sendMessage(Chat.format("&cYou have been temporarily muted for &7" + reason + "&c. Expires: &7" + until));
                 }
             }
         });

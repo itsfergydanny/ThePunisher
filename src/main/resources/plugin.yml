@@ -39,3 +39,5 @@ commands:
     description: Roll back a staff member's actions.
   unwarn:
     description: Removes a players last warn.
+  history:
+    description: View a players recent punishments.
