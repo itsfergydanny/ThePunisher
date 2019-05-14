@@ -53,13 +53,25 @@ public class HistoryCommand implements CommandExecutor {
             @Override
             public void run() {
                 try (Connection con = plugin.getSql().getDatasource().getConnection()) {
+
+                    String type = targetType;
+                    String player = target;
+
+
                     StringBuilder message = new StringBuilder();
                     int count = 0;
 
+                    PreparedStatement pst = con.prepareStatement("SELECT * from `users` where `" + targetType + "` = '" + target + "'");
+                    ResultSet rs = pst.executeQuery();
+                    if (rs.next()) {
+                       type = "uuid";
+                       player = rs.getString("uuid");
+                    }
+
                     // Get bans
                     message.append("&c&lBans:\n");
-                    PreparedStatement pst = con.prepareStatement("SELECT * from `bans` where `" + targetType + "` = '" + target + "' ORDER BY `time` DESC LIMIT " + limit);
-                    ResultSet rs = pst.executeQuery();
+                    pst = con.prepareStatement("SELECT * from `bans` where `" + type + "` = '" + player + "' ORDER BY `time` DESC LIMIT " + limit);
+                    rs = pst.executeQuery();
                     while (rs.next()) {
                         count++;
                         String reason = rs.getString("reason");
@@ -100,7 +112,7 @@ public class HistoryCommand implements CommandExecutor {
                     // Get mutes
                     message.append("\n \n&c&lMutes:\n");
                     count = 0;
-                    pst = con.prepareStatement("SELECT * from `mutes` where `" + targetType + "` = '" + target + "' ORDER BY `time` DESC LIMIT " + limit);
+                    pst = con.prepareStatement("SELECT * from `mutes` where `" + type + "` = '" + player + "' ORDER BY `time` DESC LIMIT " + limit);
                     rs = pst.executeQuery();
                     while (rs.next()) {
                         count++;
@@ -142,7 +154,7 @@ public class HistoryCommand implements CommandExecutor {
                     // Get warns
                     message.append("\n \n&c&lWarns:\n");
                     count = 0;
-                    pst = con.prepareStatement("SELECT * from `warns` where `" + targetType + "` = '" + target + "' ORDER BY `time` DESC LIMIT " + limit);
+                    pst = con.prepareStatement("SELECT * from `warns` where `" + type + "` = '" + player + "' ORDER BY `time` DESC LIMIT " + limit);
                     rs = pst.executeQuery();
                     while (rs.next()) {
                         count++;
@@ -184,7 +196,7 @@ public class HistoryCommand implements CommandExecutor {
                     // Get kicks
                     message.append("\n \n&c&lKicks:\n");
                     count = 0;
-                    pst = con.prepareStatement("SELECT * from `kicks` where `" + targetType + "` = '" + target + "' ORDER BY `time` DESC LIMIT " + limit);
+                    pst = con.prepareStatement("SELECT * from `kicks` where `" + type + "` = '" + player + "' ORDER BY `time` DESC LIMIT " + limit);
                     rs = pst.executeQuery();
                     while (rs.next()) {
                         count++;

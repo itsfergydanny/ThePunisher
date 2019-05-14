@@ -42,9 +42,6 @@ public class ImportCommand implements CommandExecutor {
         }
 
         importBans(sender);
-        importMutes(sender);
-        importWarns(sender);
-        importKicks(sender);
         return true;
     }
 
@@ -67,12 +64,14 @@ public class ImportCommand implements CommandExecutor {
                         String reason = rs.getString("reason").replaceAll("'", "").replaceAll("\\\\", "");
                         String punisherIgn = rs.getString("banned_by_name");
                         String punisher_uuid = rs.getString("banned_by_uuid");
-                        if (punisherIgn.equals("#undefined#")) {
+                        if (punisherIgn == null ||punisherIgn.equals("#undefined#")) {
                             punisherIgn = getLastKnownUsernameFromUUID(punisher_uuid);
                         }
                         Timestamp time = new Timestamp(rs.getLong("time"));
 
                         ign = getLastKnownUsernameFromUUID(uuid);
+
+                        addToUsersTable(ign, uuid);
 
                         try (Connection con = plugin.getSql().getDatasource().getConnection()) {
                             PreparedStatement pst3 = con.prepareStatement("INSERT INTO `kicks` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `time`) VALUES (NULL," +
@@ -81,6 +80,7 @@ public class ImportCommand implements CommandExecutor {
                         }
                     }
                     sender.sendMessage(Chat.format("&aImported " + count + " kicks from litebans!"));
+                    importWarns(sender);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -108,11 +108,14 @@ public class ImportCommand implements CommandExecutor {
                         String reason = rs.getString("reason").replaceAll("'", "").replaceAll("\\\\", "");
                         String punisherIgn = rs.getString("banned_by_name");
                         String punisher_uuid = rs.getString("banned_by_uuid");
-                        if (punisherIgn.equals("#undefined#")) {
+                        if (punisherIgn == null ||punisherIgn.equals("#undefined#")) {
                             punisherIgn = getLastKnownUsernameFromUUID(punisher_uuid);
                         }
                         int active = rs.getInt("active");
                         Timestamp time = new Timestamp(rs.getLong("time"));
+                        if (time.getTime() < Timestamp.valueOf("1970-01-10 00:10:00").getTime()) {
+                            time = Timestamp.valueOf("1970-01-10 00:10:00");
+                        }
                         Timestamp until = null;
                         Timestamp removedTime = rs.getTimestamp("removed_by_date");
                         if (rs.getLong("until") > 0) {
@@ -122,7 +125,7 @@ public class ImportCommand implements CommandExecutor {
                             }
                         }
                         String ip = rs.getString("ip");
-                        if (ip.equals("127.0.0.1") || ip.contains("#")) {
+                        if (ip == null || ip.equals("127.0.0.1") || ip.contains("#")) {
                             ip = "";
                         }
                         String removerUuid = rs.getString("removed_by_uuid");
@@ -136,6 +139,8 @@ public class ImportCommand implements CommandExecutor {
                         }
 
                         ign = getLastKnownUsernameFromUUID(uuid);
+
+                        addToUsersTable(ign, uuid);
 
 //                        System.out.println("[Importer] imported warning #" + id + ". Ign: " + ign + ". UUID: " + uuid + ". Reason: " + reason + ". Punisher Ign: " + punisherIgn + ". Punisher UUID: " + punisher_uuid + "" +
 //                                ". Active: " + active + ". Time: " + time + ". Until: " + until + ". IP: " + ip + ". Remover Ign: " + removerIgn + ". Remover UUID: " + removerUuid + ". Remover Time: " + removedTime);
@@ -196,11 +201,14 @@ public class ImportCommand implements CommandExecutor {
                         String reason = rs.getString("reason").replaceAll("'", "").replaceAll("\\\\", "");
                         String punisherIgn = rs.getString("banned_by_name");
                         String punisher_uuid = rs.getString("banned_by_uuid");
-                        if (punisherIgn.equals("#undefined#")) {
+                        if (punisherIgn == null || punisherIgn.equals("#undefined#")) {
                             punisherIgn = getLastKnownUsernameFromUUID(punisher_uuid);
                         }
                         int active = rs.getInt("active");
                         Timestamp time = new Timestamp(rs.getLong("time"));
+                        if (time.getTime() < Timestamp.valueOf("1970-01-10 00:10:00").getTime()) {
+                            time = Timestamp.valueOf("1970-01-10 00:10:00");
+                        }
                         Timestamp until = null;
                         Timestamp removedTime = rs.getTimestamp("removed_by_date");
                         if (rs.getLong("until") > 0) {
@@ -210,7 +218,7 @@ public class ImportCommand implements CommandExecutor {
                             }
                         }
                         String ip = rs.getString("ip");
-                        if (ip.equals("127.0.0.1") || ip.contains("#")) {
+                        if (ip == null || ip.equals("127.0.0.1") || ip.contains("#")) {
                             ip = "";
                         }
                         String removerUuid = rs.getString("removed_by_uuid");
@@ -224,6 +232,8 @@ public class ImportCommand implements CommandExecutor {
                         }
 
                         ign = getLastKnownUsernameFromUUID(uuid);
+
+                        addToUsersTable(ign, uuid);
 
 //                        System.out.println("[Importer] imported mute #" + id + ". Ign: " + ign + ". UUID: " + uuid + ". Reason: " + reason + ". Punisher Ign: " + punisherIgn + ". Punisher UUID: " + punisher_uuid + "" +
 //                                ". Active: " + active + ". Time: " + time + ". Until: " + until + ". IP: " + ip + ". Remover Ign: " + removerIgn + ". Remover UUID: " + removerUuid + ". Remover Time: " + removedTime);
@@ -257,6 +267,7 @@ public class ImportCommand implements CommandExecutor {
                         }
                     }
                     sender.sendMessage(Chat.format("&aImported " + count + " mutes from litebans!"));
+                    importKicks(sender);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -284,11 +295,14 @@ public class ImportCommand implements CommandExecutor {
                         String reason = rs.getString("reason").replaceAll("'", "").replaceAll("\\\\", "");
                         String punisherIgn = rs.getString("banned_by_name");
                         String punisher_uuid = rs.getString("banned_by_uuid");
-                        if (punisherIgn.equals("#undefined#")) {
+                        if (punisherIgn == null ||punisherIgn.equals("#undefined#")) {
                             punisherIgn = getLastKnownUsernameFromUUID(punisher_uuid);
                         }
                         int active = rs.getInt("active");
                         Timestamp time = new Timestamp(rs.getLong("time"));
+                        if (time.getTime() < Timestamp.valueOf("1970-01-10 00:10:00").getTime()) {
+                            time = Timestamp.valueOf("1970-01-10 00:10:00");
+                        }
                         Timestamp until = null;
                         Timestamp removedTime = rs.getTimestamp("removed_by_date");
                         if (rs.getLong("until") > 0) {
@@ -298,7 +312,7 @@ public class ImportCommand implements CommandExecutor {
                             }
                         }
                         String ip = rs.getString("ip");
-                        if (ip.equals("127.0.0.1") || ip.contains("#")) {
+                        if (ip == null || ip.equals("127.0.0.1") || ip.contains("#")) {
                             ip = "";
                         }
                         String removerUuid = rs.getString("removed_by_uuid");
@@ -312,6 +326,8 @@ public class ImportCommand implements CommandExecutor {
                         }
 
                         ign = getLastKnownUsernameFromUUID(uuid);
+
+                        addToUsersTable(ign, uuid);
 
 //                        System.out.println("[Importer] imported ban #" + id + ". Ign: " + ign + ". UUID: " + uuid + ". Reason: " + reason + ". Punisher Ign: " + punisherIgn + ". Punisher UUID: " + punisher_uuid + "" +
 //                                ". Active: " + active + ". Time: " + time + ". Until: " + until + ". IP: " + ip + ". Remover Ign: " + removerIgn + ". Remover UUID: " + removerUuid + ". Remover Time: " + removedTime);
@@ -345,11 +361,28 @@ public class ImportCommand implements CommandExecutor {
                         }
                     }
                     sender.sendMessage(Chat.format("&aImported " + count + " bans from litebans!"));
+                    importMutes(sender);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
         });
+    }
+
+    private void addToUsersTable(String ign, String uuid) {
+        try (Connection con = plugin.getSql().getDatasource().getConnection()) {
+            PreparedStatement pst = con.prepareStatement("SELECT * FROM `users` WHERE `uuid` = '" + uuid + "'");
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                pst = con.prepareStatement("UPDATE `users` SET `ign`='" + ign + "' WHERE `uuid` = '" + uuid + "'");
+                pst.execute();
+            } else {
+                pst = con.prepareStatement("INSERT INTO `users` (`id`, `ign`, `uuid`, `ip`) VALUES (NULL, '" + ign + "', '" + uuid + "', '')");
+                pst.execute();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private String getLastKnownUsernameFromUUID(String uuid) {
