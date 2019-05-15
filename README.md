@@ -19,3 +19,8 @@
 - /staffrollback (username/uuid) (bans/warns/mutes/all) (time) -> punisher.staffrollback
 - /unwarn (username/uuid) -> punisher.unwarn
 - /history (username/uuid) -> punisher.history
+
+## Permissions (Format: permission -> effect)
+- punisher.bypass.ban -> members with this permission can login even tho they are banned
+- punisher.bypass.mute -> members with this permission can talk even tho they are muted
+- punisher.notify -> get advanced information about punishments

@@ -109,6 +109,7 @@ public class StaffRollbackCommand implements CommandExecutor {
                         count += rollbackType("bans", uuid, time, punisherIgn, punisherUuid);
                         count += rollbackType("mutes", uuid, time, punisherIgn, punisherUuid);
                         count += rollbackType("warns", uuid, time, punisherIgn, punisherUuid);
+                        count += rollbackType("kicks", uuid, time, punisherIgn, punisherUuid);
                         sender.sendMessage(Chat.format("&aRolled back " + count + " punishments from " + ign + " (" + uuid + ")."));
                         return;
                     }

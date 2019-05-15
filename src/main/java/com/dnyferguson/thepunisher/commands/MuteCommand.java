@@ -112,43 +112,21 @@ public class MuteCommand implements CommandExecutor {
                                 " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, '" + until + "', '" + ip + "', '', '', NULL)");
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully muted " + target + " for " + reason + " until " + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + " EST!"));
-                        plugin.getMutedPlayers().add(uuid);
-                        notifyPlayer(target, reason, new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + " EST");
+                        plugin.getRedis().sendMessage("mute/" + uuid + "/" + reason + "/" + new SimpleDateFormat("MM-dd-yyyy @ HH:mm").format(until) + " EST");
+//                        plugin.getRedis().sendMessage("alertplayers/" + "&cA player has been muted by &7" + punisherIgn + "&c!");
+                        plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has muted &7" + ign + "&c for &7" + reason + "&c until &7" + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + "&c!");
                     } else {
                         pst = con.prepareStatement("INSERT INTO `mutes` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
                                 " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL," +
                                 " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, NULL, '" + ip + "', '', '', NULL)");
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully muted " + target + " for " + reason + "!"));
-                        plugin.getMutedPlayers().add(uuid);
-                        notifyPlayer(target, reason);
+                        plugin.getRedis().sendMessage("mute/" + uuid + "/" + reason + "/" + "");
+//                        plugin.getRedis().sendMessage("alertplayers/" + "&cA player has been muted by &7" + punisherIgn + "&c!");
+                        plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has muted &7" + ign + "&c for &7" + reason + "&c!");
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void notifyPlayer(String target, String reason) {
-        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-            @Override
-            public void run() {
-                Player player = Bukkit.getPlayer(target);
-                if (player != null) {
-                    player.sendMessage(Chat.format("&cYou have been permanently muted for &7" + reason + "&c."));
-                }
-            }
-        });
-    }
-
-    private void notifyPlayer(String target, String reason, String until) {
-        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-            @Override
-            public void run() {
-                Player player = Bukkit.getPlayer(target);
-                if (player != null) {
-                    player.sendMessage(Chat.format("&cYou have been temporarily muted for &7" + reason + "&c. Expires: &7" + until));
                 }
             }
         });

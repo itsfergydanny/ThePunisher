@@ -89,7 +89,7 @@ public class PunisherCommand implements CommandExecutor {
         if (sender.hasPermission("punisher.bypassmute")) {
             availableCommands++;
             message.append("\n");
-            message.append(listItemFormat.replace("%command%", "/bypassuuid (username/uuid)").replace("%usage%", "Allow a specific player to bypass a mute."));
+            message.append(listItemFormat.replace("%command%", "/bypassmute (username/uuid)").replace("%usage%", "Allow a specific player to bypass a mute."));
         }
 
         if (sender.hasPermission("punisher.unbypassban")) {
@@ -119,7 +119,7 @@ public class PunisherCommand implements CommandExecutor {
         if (sender.hasPermission("punisher.staffrollback")) {
             availableCommands++;
             message.append("\n");
-            message.append(listItemFormat.replace("%command%", "/staffrollback (username/uuid) (bans/warns/mutes/all) (time)").replace("%usage%", "Roll back a staff member\'s actions."));
+            message.append(listItemFormat.replace("%command%", "/staffrollback (username/uuid) (bans/warns/mutes/kicks/all) (time)").replace("%usage%", "Roll back a staff member\'s actions."));
         }
 
         if (sender.hasPermission("punisher.unwarn")) {

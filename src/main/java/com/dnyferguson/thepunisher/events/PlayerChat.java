@@ -35,8 +35,17 @@ public class PlayerChat implements Listener {
                 try (Connection con = plugin.getSql().getDatasource().getConnection()) {
                     String uuid = player.getUniqueId().toString();
 
-                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
+                    // Let chat if in bypassmute
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `bypass_mute` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
                     ResultSet rs = pst.executeQuery();
+                    if (rs.next()) {
+                        plugin.getMutedPlayers().remove(uuid);
+                        player.sendMessage(Chat.format("&aYou are bypassing a mute. Your next messages will send!"));
+                        return;
+                    }
+
+                    pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
+                    rs = pst.executeQuery();
                     if (rs.next()) {
                         Timestamp now = new Timestamp(new Date().getTime());
                         Timestamp until = rs.getTimestamp("until");

@@ -9,12 +9,14 @@ commands:
     description: Lists available punishment commands.
   ban:
     description: Ban a player.
+    aliases: [banip, ipban]
   unban:
     description: Unban a player.
   checkban:
     description: Check if a player is currently banned.
   mute:
     description: Mute a player.
+    aliases: [muteip, ipmute]
   unmute:
     description: Unmute a player.
   checkmute:

@@ -61,6 +61,12 @@ public class BypassMuteCommand implements CommandExecutor {
                         return;
                     }
 
+                    String name = "Console";
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        name = player.getName();
+                    }
+
                     pst = con.prepareStatement("SELECT * FROM `users` WHERE `" + targetType + "` = '" + target + "'");
                     rs = pst.executeQuery();
                     if (rs.next()) {
@@ -69,6 +75,7 @@ public class BypassMuteCommand implements CommandExecutor {
                         pst = con.prepareStatement("INSERT INTO `bypass_mute` (`id`, `ign`, `uuid`, `punisher_ign`, `punisher_uuid`, `active`, `time`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL, '" + ign + "', '" + uuid + "', '" + punisherIgn + "', '" + punisherUuid + "', '1', " + "CURRENT_TIMESTAMP, '', '', NULL)");
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully added " + target + " to the bypass mutes list."));
+                        plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + name + "&c has granted &7" + ign + "&c the ability to bypass mutes!");
                     } else {
                         sender.sendMessage(Chat.format("&cPlayer not found."));
                     }

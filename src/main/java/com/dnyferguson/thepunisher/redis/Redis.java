@@ -2,6 +2,7 @@ package com.dnyferguson.thepunisher.redis;
 
 import com.dnyferguson.thepunisher.ThePunisher;
 import com.dnyferguson.thepunisher.utils.Chat;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
@@ -81,6 +82,62 @@ public class Redis {
                                         }
                                     });
                                 }
+                            }
+                            if (args[0].equals("notify")) {
+                                String target = args[1];
+                                String msg = args[2];
+                                Player player = plugin.getServer().getPlayer(UUID.fromString(target));
+                                if (player != null) {
+                                    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            player.sendMessage(Chat.format(msg));
+                                        }
+                                    });
+                                }
+                            }
+                            if (args[0].equals("mute")) {
+                                String target = args[1];
+                                String reason = args[2];
+                                Player player = plugin.getServer().getPlayer(UUID.fromString(target));
+                                if (player != null) {
+                                    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            plugin.getMutedPlayers().add(target);
+                                            if (args.length == 3) {
+                                                player.sendMessage(Chat.format("&cYou have been permanently muted for &7" + reason + "&c."));
+                                            } else {
+                                                String until = args[3];
+                                                player.sendMessage(Chat.format("&cYou have been temporarily muted for &7" + reason + "&c. Expires: &7" + until));
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                            if (args[0].equals("alertplayers")) {
+                                String msg = args[1];
+                                plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        for (Player player : Bukkit.getOnlinePlayers()) {
+                                            player.sendMessage(Chat.format(msg));
+                                        }
+                                    }
+                                });
+                            }
+                            if (args[0].equals("alertstaff")) {
+                                String msg = args[1];
+                                plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        for (Player player : Bukkit.getOnlinePlayers()) {
+                                            if (player.hasPermission("thepunisher.notify")) {
+                                                player.sendMessage(Chat.format(msg));
+                                            }
+                                        }
+                                    }
+                                });
                             }
                         }
                     }, "punisher");

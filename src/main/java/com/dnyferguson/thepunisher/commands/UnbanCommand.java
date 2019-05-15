@@ -59,7 +59,11 @@ public class UnbanCommand implements CommandExecutor {
 
                     PreparedStatement pst = con.prepareStatement("SELECT * FROM `bans` WHERE `" + banType + "` = '" + target + "' AND `active` = 1");
                     ResultSet rs = pst.executeQuery();
+
+                    String ign = "";
+
                     while (rs.next()) {
+                        ign = rs.getString("ign");
                         found = true;
                         pst = con.prepareStatement("UPDATE `bans` SET `active`='0',`remover_ign`='" + removerIgn + "',`remover_uuid`='" + removerUuid + "',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + rs.getString("uuid") + "'");
                         pst.execute();
@@ -67,6 +71,7 @@ public class UnbanCommand implements CommandExecutor {
 
                     if (found) {
                         sender.sendMessage(Chat.format("&aSuccessfully unbanned " + target + "!"));
+                        plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + removerIgn + "&c has unbanned &7" + ign + "&c!");
                     } else {
                         sender.sendMessage(Chat.format("&cPlayer not found or not banned."));
                     }

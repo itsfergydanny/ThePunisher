@@ -70,9 +70,15 @@ public final class ThePunisher extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        sql.closeConnections();
-        redis.closeConnections();
-        importer.closeConnections();
+        if (sql != null) {
+            sql.closeConnections();
+        }
+        if (redis != null) {
+            redis.closeConnections();
+        }
+        if (importer != null) {
+            importer.closeConnections();
+        }
     }
 
     public MySQL getSql() {

@@ -84,6 +84,8 @@ public class KickCommand implements CommandExecutor {
                     }
 
                     plugin.getRedis().sendMessage("kick/" + uuid + "/" + reason);
+//                    plugin.getRedis().sendMessage("alertplayers/" + "&cA player has been kicked by &7" + punisherIgn + "&c!");
+                    plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has kicked &7" + ign + "&c for &7" + reason + "&c!");
                     sender.sendMessage(Chat.format("&aYou have succesfully kicked " + target + " for " + reason + "!"));
 
                     if (shouldLog) {

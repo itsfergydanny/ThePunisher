@@ -55,17 +55,26 @@ public class UnbypassBanCommand implements CommandExecutor {
                     }
 
                     boolean found = false;
+                    String ign = "";
 
                     PreparedStatement pst = con.prepareStatement("SELECT * FROM `bypass_ban` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1");
                     ResultSet rs = pst.executeQuery();
                     while (rs.next()) {
+                        ign = rs.getString("ign");
                         found = true;
                         pst = con.prepareStatement("UPDATE `bypass_ban` SET `active`='0',`remover_ign`='" + removerIgn + "',`remover_uuid`='" + removerUuid + "',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + rs.getString("uuid") + "'");
                         pst.execute();
                     }
 
+                    String name = "Console";
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        name = player.getName();
+                    }
+
                     if (found) {
                         sender.sendMessage(Chat.format("&aSuccessfully removed " + target + " from the bypass bans list!"));
+                        plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + name + "&c has removed &7" + ign + "&c\'s ability to bypass bans!");
                     } else {
                         sender.sendMessage(Chat.format("&cPlayer not found or not bypassing bans."));
                     }

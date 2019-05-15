@@ -112,6 +112,8 @@ public class WarnCommand implements CommandExecutor {
                             " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, '" + com.dnyferguson.thepunisher.utils.Time.getForwards("7d") + "', '" + ip + "', '', '', NULL)");
                     pst.execute();
                     sender.sendMessage(Chat.format("&aSuccessfully warned " + target + " for " + reason + "!"));
+//                    plugin.getRedis().sendMessage("alertplayers/" + "&cA player has been warned by &7" + punisherIgn + "&c!");
+                    plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has warned &7" + ign + "&c for &7" + reason + "&c!");
 
                     // Punish based on warn count
                     pst = con.prepareStatement("SELECT * FROM `warns` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1 ORDER BY `time` DESC LIMIT " + highestTrigger);
@@ -133,11 +135,11 @@ public class WarnCommand implements CommandExecutor {
                     }
 
                     if (punishmentCommand.isEmpty()) {
-                        notifyPlayer(target, reason);
+                        notifyPlayer(uuid, reason);
                         return;
                     }
 
-                    notifyPlayer(target, reason);
+                    notifyPlayer(uuid, reason);
                     dispatchCommand(punishmentCommand);
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -155,14 +157,11 @@ public class WarnCommand implements CommandExecutor {
         });
     }
 
-    private void notifyPlayer(String target, String reason) {
+    private void notifyPlayer(String uuid, String reason) {
         plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
             @Override
             public void run() {
-                Player player = Bukkit.getPlayer(target);
-                if (player != null) {
-                    player.sendMessage(Chat.format("&cYou have been warned for &7" + reason + "&c. If you keep this up more severe punishments will follow."));
-                }
+                plugin.getRedis().sendMessage("notify/" + uuid + "/" + "&cYou have been warned for &7" + reason + "&c. If you keep this up more severe punishments will follow.");
             }
         });
     }

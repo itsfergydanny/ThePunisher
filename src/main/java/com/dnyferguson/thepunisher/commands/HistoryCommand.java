@@ -204,7 +204,7 @@ public class HistoryCommand implements CommandExecutor {
                         String punisherIgn = rs.getString("punisher_ign");
                         String time = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("time")) + " EST";
 
-                        message.append("&cWarned on ");
+                        message.append("&cKicked on ");
                         message.append(time);
                         message.append(" by &7");
                         message.append(punisherIgn);

@@ -68,6 +68,7 @@ public class UnWarnCommand implements CommandExecutor {
                         pst = con.prepareStatement("DELETE FROM `warns` WHERE `id` = '" + id + "'");
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully deleted " + target + "\'s latest warning."));
+                        plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has unwarned &7" + punishedIgn + "&c!");
                     } else {
                         sender.sendMessage(Chat.format("&cPlayer did not have any warnings."));
                     }

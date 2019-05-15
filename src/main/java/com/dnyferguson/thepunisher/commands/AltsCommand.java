@@ -44,7 +44,13 @@ public class AltsCommand implements CommandExecutor {
                         StringBuilder alts = new StringBuilder();
                         String delimiter = "&e";
 
-                        pst = con.prepareStatement("SELECT * FROM `users` WHERE `ip` = '" + rs.getString("ip") + "'");
+                        String ip = rs.getString("ip");
+                        if (ip.isEmpty()) {
+                            sender.sendMessage(Chat.format("&cAlts not found."));
+                            return;
+                        }
+
+                        pst = con.prepareStatement("SELECT * FROM `users` WHERE `ip` = '" + ip + "'");
                         rs = pst.executeQuery();
                         while (rs.next()) {
                             String ign = rs.getString("ign");

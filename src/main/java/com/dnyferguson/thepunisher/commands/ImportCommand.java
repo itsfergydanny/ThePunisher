@@ -19,17 +19,6 @@ public class ImportCommand implements CommandExecutor {
 
     public ImportCommand(ThePunisher plugin) {
         this.plugin = plugin;
-        FileConfiguration cfg = plugin.getConfig();
-
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://" + cfg.getString("litebans-mysql.ip") + ":" + cfg.getString("litebans-mysql.port") + "/" + cfg.getString("litebans-mysql.database"));
-        config.setUsername(cfg.getString("litebans-mysql.username"));
-        config.setPassword(cfg.getString("litebans-mysql.password"));
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-
-        this.datasource = new HikariDataSource(config);
     }
 
     @Override
@@ -41,8 +30,24 @@ public class ImportCommand implements CommandExecutor {
             return true;
         }
 
+        initialize();
+
         importBans(sender);
         return true;
+    }
+
+    private void initialize() {
+        FileConfiguration cfg = plugin.getConfig();
+
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:mysql://" + cfg.getString("litebans-mysql.ip") + ":" + cfg.getString("litebans-mysql.port") + "/" + cfg.getString("litebans-mysql.database"));
+        config.setUsername(cfg.getString("litebans-mysql.username"));
+        config.setPassword(cfg.getString("litebans-mysql.password"));
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
+        this.datasource = new HikariDataSource(config);
     }
 
     private void importKicks(CommandSender sender) {
@@ -402,6 +407,8 @@ public class ImportCommand implements CommandExecutor {
     }
 
     public void closeConnections() {
-        this.datasource.close();
+        if (this.datasource != null) {
+            this.datasource.close();
+        }
     }
 }
