@@ -32,7 +32,7 @@ public class UnWarnCommand implements CommandExecutor {
             return true;
         }
 
-        String target = args[0].replaceAll("[^0-9a-zA-Z\\.-]", "");
+        String target = args[0].replaceAll("[^0-9a-zA-Z\\.\\-_]", "");
         String targetType = plugin.getSql().getTargetType(target);
 
         String punisherIgn = "Console";

@@ -56,8 +56,9 @@ public final class ThePunisher extends JavaPlugin {
 
         // Iterate thru all online players to apply any mutes on reload
         for (Player player : Bukkit.getOnlinePlayers()) {
+            String ip = player.getAddress().getAddress().getHostAddress();
             String uuid = player.getUniqueId().toString();
-            sql.isPlayerPunished(uuid, "mutes", new UserIsPunishedCallback() {
+            sql.isPlayerPunished(ip, "mutes", new UserIsPunishedCallback() {
                 @Override
                 public void onPlayerIsPunished(boolean result) {
                     if (result) {

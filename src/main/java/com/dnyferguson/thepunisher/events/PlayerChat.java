@@ -44,7 +44,7 @@ public class PlayerChat implements Listener {
                         return;
                     }
 
-                    pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
+                    pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `ip` = '" + player.getAddress().getAddress().getHostAddress() + "' AND `active` = 1");
                     rs = pst.executeQuery();
                     if (rs.next()) {
                         Timestamp now = new Timestamp(new Date().getTime());

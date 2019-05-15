@@ -1,7 +1,7 @@
 # The Punisher
 
 ### Commands (Format: command -> pemrission)
-- /punisher -> punisher.help
+- /punisher -> punisher.list
 - /ban (username/uuid/ip) (reason) -> punisher.ban
 - /unban (username/uuid/ip) -> punisher.unban
 - /checkban (username/uuid/ip) -> punisher.checkban
@@ -21,6 +21,4 @@
 - /history (username/uuid) -> punisher.history
 
 ## Permissions (Format: permission -> effect)
-- punisher.bypass.ban -> members with this permission can login even tho they are banned
-- punisher.bypass.mute -> members with this permission can talk even tho they are muted
 - punisher.notify -> get advanced information about punishments

@@ -63,7 +63,7 @@ public class MuteCommand implements CommandExecutor {
             argList = Arrays.copyOfRange(args, 1, args.length);
         }
 
-        String target = args[0].replaceAll("[^0-9a-zA-Z\\.-]", "");
+        String target = args[0].replaceAll("[^0-9a-zA-Z\\.\\-_]", "");
         String targetType = plugin.getSql().getTargetType(target);
         String reason = String.join(" ", argList);
 
@@ -105,6 +105,14 @@ public class MuteCommand implements CommandExecutor {
                         ign = rs.getString("ign");
                         ip = rs.getString("ip");
                     }
+
+                    pst = con.prepareStatement("SELECT * FROM `bypass_mute` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
+                    rs = pst.executeQuery();
+                    if (rs.next()) {
+                        sender.sendMessage(Chat.format("&cPlayer is bypassing mutes. Please remove the bypass before punishing!"));
+                        return;
+                    }
+
 
                     if (isTemporaryPunishment) {
                         pst = con.prepareStatement("INSERT INTO `mutes` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +

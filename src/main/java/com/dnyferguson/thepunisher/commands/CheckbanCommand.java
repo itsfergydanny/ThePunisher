@@ -32,7 +32,7 @@ public class CheckbanCommand implements CommandExecutor {
             return true;
         }
 
-        String target = args[0].replaceAll("[^0-9a-zA-Z\\.-]", "");
+        String target = args[0].replaceAll("[^0-9a-zA-Z\\.\\-_]", "");
 
         String banType = plugin.getSql().getTargetType(target);
 

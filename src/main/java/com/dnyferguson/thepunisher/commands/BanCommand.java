@@ -62,7 +62,7 @@ public class BanCommand implements CommandExecutor {
             argList = Arrays.copyOfRange(args, 1, args.length);
         }
 
-        String target = args[0].replaceAll("[^0-9a-zA-Z\\.-]", "");
+        String target = args[0].replaceAll("[^0-9a-zA-Z\\.\\-_]", "");
         String targetType = plugin.getSql().getTargetType(target);
         String reason = String.join(" ", argList);
 
@@ -103,6 +103,13 @@ public class BanCommand implements CommandExecutor {
                         uuid = rs.getString("uuid");
                         ign = rs.getString("ign");
                         ip = rs.getString("ip");
+                    }
+
+                    pst = con.prepareStatement("SELECT * FROM `bypass_ban` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
+                    rs = pst.executeQuery();
+                    if (rs.next()) {
+                        sender.sendMessage(Chat.format("&cPlayer is bypassing bans. Please remove the bypass before punishing!"));
+                        return;
                     }
 
                     if (isTemporaryPunishment) {

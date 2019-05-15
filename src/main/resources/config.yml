@@ -57,6 +57,8 @@ blocked-commands-when-muted:
   - '/me'
   - '/m'
   - '/pm'
+  - '/p'
+  - '/party'
 
 #
 # Kicks
