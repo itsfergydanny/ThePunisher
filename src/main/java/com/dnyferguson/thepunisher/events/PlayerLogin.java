@@ -52,7 +52,6 @@ public class PlayerLogin implements Listener {
                 bypassBan = true;
             }
 
-            // Check if ip is banned
             pst = con.prepareStatement("SELECT * FROM `bans` WHERE `ip` = '" + ip + "' AND `active` = 1");
             rs = pst.executeQuery();
             if (rs.next()) {
@@ -65,11 +64,9 @@ public class PlayerLogin implements Listener {
                             pst.execute();
                         } else {
                             callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("until"));
-                            return;
                         }
                     }
                     callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"));
-                    return;
                 }
             }
 
@@ -86,11 +83,9 @@ public class PlayerLogin implements Listener {
                             pst.execute();
                         } else {
                             callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("until"));
-                            return;
                         }
                     }
                     callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"));
-                    return;
                 }
             }
 
@@ -106,8 +101,17 @@ public class PlayerLogin implements Listener {
             rs = pst.executeQuery();
             if (rs.next()) {
                 if (!bypassMute) {
-                    plugin.getMutedPlayers().add(uuid);
-                    return;
+                    Timestamp now = new Timestamp(new Date().getTime());
+                    Timestamp until = rs.getTimestamp("until");
+                    if (until != null) {
+                        if (now.getTime() > until.getTime()) {
+                            pst = con.prepareStatement("UPDATE `mutes` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `ip` = '" + ip + "'");
+                            pst.execute();
+                            plugin.getMutedPlayers().remove(uuid);
+                        } else {
+                            plugin.getMutedPlayers().add(uuid);
+                        }
+                    }
                 }
             }
 
@@ -116,8 +120,17 @@ public class PlayerLogin implements Listener {
             rs = pst.executeQuery();
             if (rs.next()) {
                 if (!bypassMute) {
-                    plugin.getMutedPlayers().add(uuid);
-                    return;
+                    Timestamp now = new Timestamp(new Date().getTime());
+                    Timestamp until = rs.getTimestamp("until");
+                    if (until != null) {
+                        if (now.getTime() > until.getTime()) {
+                            pst = con.prepareStatement("UPDATE `mutes` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "'");
+                            pst.execute();
+                            plugin.getMutedPlayers().remove(uuid);
+                        } else {
+                            plugin.getMutedPlayers().add(uuid);
+                        }
+                    }
                 }
             }
 

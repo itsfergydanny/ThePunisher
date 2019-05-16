@@ -10,6 +10,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 
+import java.time.Duration;
 import java.util.UUID;
 
 public class Redis {
@@ -148,14 +149,21 @@ public class Redis {
 
     public void closeConnections() {
         pubSub.unsubscribe();
+        jedisPool.close();
     }
 
     private JedisPoolConfig buildPoolConfig() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(32);
-        poolConfig.setMaxIdle(16);
-        poolConfig.setMinIdle(4);
-        poolConfig.setMaxWaitMillis(1000);
+        poolConfig.setMaxTotal(128);
+        poolConfig.setMaxIdle(20);
+        poolConfig.setMinIdle(5);
+        poolConfig.setTestOnBorrow(true);
+        poolConfig.setTestOnReturn(true);
+        poolConfig.setTestWhileIdle(true);
+        poolConfig.setMinEvictableIdleTimeMillis(Duration.ofSeconds(60).toMillis());
+        poolConfig.setTimeBetweenEvictionRunsMillis(Duration.ofSeconds(30).toMillis());
+        poolConfig.setNumTestsPerEvictionRun(3);
+        poolConfig.setBlockWhenExhausted(true);
         return poolConfig;
     }
 }

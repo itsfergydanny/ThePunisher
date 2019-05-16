@@ -119,7 +119,7 @@ public class BanCommand implements CommandExecutor {
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully banned " + target + " for " + reason + " until " + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + " EST!"));
 //                        plugin.getRedis().sendMessage("alertplayers/" + "&cA player has been banned by &7" + punisherIgn + "&c!");
-                        plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has banned &7" + ign + "&c for &7" + reason + "&c until &7" + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + "&c!");
+                        plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has banned &7" + ign + "&c for &7" + reason + "&c until &7" + new SimpleDateFormat("MM-dd-yyyy @ HH:mm").format(until) + "&c!");
                     } else {
                         pst = con.prepareStatement("INSERT INTO `bans` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
                                 " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL," +
