@@ -45,3 +45,5 @@ commands:
     description: View a players recent punishments.
   litebansimport:
     description: Console only import command to import from litebans.
+  punishermerge:
+    description: Merge punishments to one table

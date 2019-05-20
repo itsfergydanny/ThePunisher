@@ -90,7 +90,7 @@ public class BanCommand implements CommandExecutor {
                     String ip = target;
 
                     // Check if already banned
-                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `bans` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1");
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1 AND `type` = 'ban'");
                     ResultSet rs = pst.executeQuery();
                     if (rs.next()) {
                         sender.sendMessage(Chat.format("&cPlayer is already banned."));
@@ -113,20 +113,18 @@ public class BanCommand implements CommandExecutor {
                     }
 
                     if (isTemporaryPunishment) {
-                        pst = con.prepareStatement("INSERT INTO `bans` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
-                                " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL," +
+                        pst = con.prepareStatement("INSERT INTO `punishments` (`id`, `type`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
+                                " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL, 'ban'," +
                                 " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, '" + until + "', '" + ip + "', '', '', NULL)");
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully banned " + target + " for " + reason + " until " + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + " EST!"));
-//                        plugin.getRedis().sendMessage("alertplayers/" + "&cA player has been banned by &7" + punisherIgn + "&c!");
                         plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has banned &7" + ign + "&c for &7" + reason + "&c until &7" + new SimpleDateFormat("MM-dd-yyyy @ HH:mm").format(until) + "&c!");
                     } else {
-                        pst = con.prepareStatement("INSERT INTO `bans` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
-                                " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL," +
+                        pst = con.prepareStatement("INSERT INTO `punishments` (`id`, `type`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
+                                " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL, 'ban'," +
                                 " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, NULL, '" + ip + "', '', '', NULL)");
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully banned " + target + " for " + reason + "!"));
-//                        plugin.getRedis().sendMessage("alertplayers/" + "&cA player has been banned by &7" + punisherIgn + "&c!");
                         plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has banned &7" + ign + "&c for &7" + reason + "&c!");
                     }
                     plugin.getRedis().sendMessage("ban/" + uuid + "/" + reason);

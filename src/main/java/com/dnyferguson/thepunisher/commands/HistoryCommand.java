@@ -8,8 +8,6 @@ import org.bukkit.command.CommandSender;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
 
 public class HistoryCommand implements CommandExecutor {
 
@@ -70,7 +68,7 @@ public class HistoryCommand implements CommandExecutor {
 
                     // Get bans
                     message.append("&c&lBans:\n");
-                    pst = con.prepareStatement("SELECT * from `bans` where `" + type + "` = '" + player + "' ORDER BY `time` DESC LIMIT " + limit);
+                    pst = con.prepareStatement("SELECT * from `punishments` where `" + type + "` = '" + player + "' AND `type` = 'ban' ORDER BY `time` DESC LIMIT " + limit);
                     rs = pst.executeQuery();
                     while (rs.next()) {
                         count++;
@@ -112,7 +110,7 @@ public class HistoryCommand implements CommandExecutor {
                     // Get mutes
                     message.append("\n \n&c&lMutes:\n");
                     count = 0;
-                    pst = con.prepareStatement("SELECT * from `mutes` where `" + type + "` = '" + player + "' ORDER BY `time` DESC LIMIT " + limit);
+                    pst = con.prepareStatement("SELECT * from `punishments` where `" + type + "` = '" + player + "' AND `type` = 'mute' ORDER BY `time` DESC LIMIT " + limit);
                     rs = pst.executeQuery();
                     while (rs.next()) {
                         count++;
@@ -154,7 +152,7 @@ public class HistoryCommand implements CommandExecutor {
                     // Get warns
                     message.append("\n \n&c&lWarns:\n");
                     count = 0;
-                    pst = con.prepareStatement("SELECT * from `warns` where `" + type + "` = '" + player + "' ORDER BY `time` DESC LIMIT " + limit);
+                    pst = con.prepareStatement("SELECT * from `punishments` where `" + type + "` = '" + player + "' AND `type` = 'warn' ORDER BY `time` DESC LIMIT " + limit);
                     rs = pst.executeQuery();
                     while (rs.next()) {
                         count++;
@@ -196,7 +194,7 @@ public class HistoryCommand implements CommandExecutor {
                     // Get kicks
                     message.append("\n \n&c&lKicks:\n");
                     count = 0;
-                    pst = con.prepareStatement("SELECT * from `kicks` where `" + type + "` = '" + player + "' ORDER BY `time` DESC LIMIT " + limit);
+                    pst = con.prepareStatement("SELECT * from `punishments` where `" + type + "` = '" + player + "' AND `type` = 'kick' ORDER BY `time` DESC LIMIT " + limit);
                     rs = pst.executeQuery();
                     while (rs.next()) {
                         count++;

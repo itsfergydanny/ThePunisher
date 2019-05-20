@@ -33,13 +33,16 @@ public class StaffRollbackCommand implements CommandExecutor {
         String punishmentType = "";
         switch (args[1].toLowerCase()) {
             case "bans":
-                punishmentType = "bans";
+                punishmentType = "ban";
                 break;
             case "warns":
-                punishmentType = "warns";
+                punishmentType = "warn";
                 break;
             case "mutes":
-                punishmentType = "mutes";
+                punishmentType = "mute";
+                break;
+            case "kicks":
+                punishmentType = "kick";
                 break;
             case "all":
                 punishmentType = "all";
@@ -106,10 +109,10 @@ public class StaffRollbackCommand implements CommandExecutor {
 
                     // Then we handle rollback "all"
                     if (punishmentType.equals("all")) {
-                        count += rollbackType("bans", uuid, time, punisherIgn, punisherUuid);
-                        count += rollbackType("mutes", uuid, time, punisherIgn, punisherUuid);
-                        count += rollbackType("warns", uuid, time, punisherIgn, punisherUuid);
-                        count += rollbackType("kicks", uuid, time, punisherIgn, punisherUuid);
+                        count += rollbackType("ban", uuid, time, punisherIgn, punisherUuid);
+                        count += rollbackType("mute", uuid, time, punisherIgn, punisherUuid);
+                        count += rollbackType("warn", uuid, time, punisherIgn, punisherUuid);
+                        count += rollbackType("kick", uuid, time, punisherIgn, punisherUuid);
                         sender.sendMessage(Chat.format("&aRolled back " + count + " punishments from " + ign + " (" + uuid + ")."));
                         return;
                     }
@@ -127,7 +130,7 @@ public class StaffRollbackCommand implements CommandExecutor {
         try (Connection con = plugin.getSql().getDatasource().getConnection()){
             int count = 0;
 
-            PreparedStatement pst = con.prepareStatement("SELECT * FROM `" + punishmentType + "` WHERE `punisher_uuid` = '" + uuid + "'");
+            PreparedStatement pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `punisher_uuid` = '" + uuid + "' AND `type` = '" + punishmentType + "'");
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 Timestamp punishmentTime = rs.getTimestamp("time");
@@ -143,7 +146,7 @@ public class StaffRollbackCommand implements CommandExecutor {
                             "Rolled back " + punishmentType + " (" + id + ")" +  " User: " + punishedIgn + ", UUID: " + punishedUuid + ", Reason: " + reason + ")', CURRENT_TIMESTAMP)");
                     pst.execute();
 
-                    pst = con.prepareStatement("DELETE FROM `" + punishmentType + "` WHERE `id` = '" + id + "'");
+                    pst = con.prepareStatement("DELETE FROM `punishments` WHERE `id` = '" + id + "' AND `type` = '" + punishmentType + "'");
                     pst.execute();
                 }
             }

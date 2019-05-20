@@ -61,59 +61,95 @@ public class Redis {
                             if (args[0].equals("ban")) {
                                 String target = args[1];
                                 String reason = args[2];
-                                Player player = plugin.getServer().getPlayer(UUID.fromString(target));
-                                if (player != null) {
-                                    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            player.kickPlayer(Chat.format("&cYou have been banned!\n&7Reason: " + reason));
-                                        }
-                                    });
+                                try {
+                                    Player player;
+                                    if (target.contains("-")) {
+                                        player = plugin.getServer().getPlayer(UUID.fromString(target));
+                                    } else {
+                                        player = plugin.getServer().getPlayer(target);
+                                    }
+                                    if (player != null) {
+                                        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                player.kickPlayer(Chat.format("&cYou have been banned!\n&7Reason: " + reason));
+                                            }
+                                        });
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
                             }
                             if (args[0].equals("kick")) {
                                 String target = args[1];
                                 String reason = args[2];
-                                Player player = plugin.getServer().getPlayer(UUID.fromString(target));
-                                if (player != null) {
-                                    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            player.kickPlayer(Chat.format("&cYou have been kicked!\n&7Reason: " + reason));
-                                        }
-                                    });
+                                try {
+                                    Player player;
+                                    if (target.contains("-")) {
+                                        player = plugin.getServer().getPlayer(UUID.fromString(target));
+                                    } else {
+                                        player = plugin.getServer().getPlayer(target);
+                                    }
+                                    if (player != null) {
+                                        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                player.kickPlayer(Chat.format("&cYou have been kicked!\n&7Reason: " + reason));
+                                            }
+                                        });
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
                             }
                             if (args[0].equals("notify")) {
                                 String target = args[1];
                                 String msg = args[2];
-                                Player player = plugin.getServer().getPlayer(UUID.fromString(target));
-                                if (player != null) {
-                                    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            player.sendMessage(Chat.format(msg));
-                                        }
-                                    });
+                                try {
+                                    Player player;
+                                    if (target.contains("-")) {
+                                        player = plugin.getServer().getPlayer(UUID.fromString(target));
+                                    } else {
+                                        player = plugin.getServer().getPlayer(target);
+                                    }
+                                    if (player != null) {
+                                        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                player.sendMessage(Chat.format(msg));
+                                            }
+                                        });
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
                             }
                             if (args[0].equals("mute")) {
                                 String target = args[1];
                                 String reason = args[2];
-                                Player player = plugin.getServer().getPlayer(UUID.fromString(target));
-                                if (player != null) {
-                                    plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            plugin.getMutedPlayers().add(target);
-                                            if (args.length == 3) {
-                                                player.sendMessage(Chat.format("&cYou have been permanently muted for &7" + reason + "&c."));
-                                            } else {
-                                                String until = args[3];
-                                                player.sendMessage(Chat.format("&cYou have been temporarily muted for &7" + reason + "&c. Expires: &7" + until));
+                                try {
+                                    Player player;
+                                    if (target.contains("-")) {
+                                        player = plugin.getServer().getPlayer(UUID.fromString(target));
+                                    } else {
+                                        player = plugin.getServer().getPlayer(target);
+                                    }
+                                    if (player != null) {
+                                        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                plugin.getMutedPlayers().add(target);
+                                                if (args.length == 3) {
+                                                    player.sendMessage(Chat.format("&cYou have been permanently muted for &7" + reason + "&c."));
+                                                } else {
+                                                    String until = args[3];
+                                                    player.sendMessage(Chat.format("&cYou have been temporarily muted for &7" + reason + "&c. Expires: &7" + until));
+                                                }
                                             }
-                                        }
-                                    });
+                                        });
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
                             }
                             if (args[0].equals("alertplayers")) {

@@ -75,7 +75,7 @@ public class WarnCommand implements CommandExecutor {
                     Timestamp now = new Timestamp(new Date().getTime());
 
                     // Check if already warned in last 15s
-                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `warns` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1 ORDER BY `time` DESC LIMIT 1");
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1 AND `type` = 'warn' ORDER BY `time` DESC LIMIT 1");
                     ResultSet rs = pst.executeQuery();
                     if (rs.next()) {
                         Timestamp punishmentTime = rs.getTimestamp("time");
@@ -96,27 +96,26 @@ public class WarnCommand implements CommandExecutor {
                     }
 
                     // Update which warnings are still valid (so fresher than 7 days)
-                    pst = con.prepareStatement("SELECT * FROM `warns` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1 ORDER BY `time` DESC LIMIT 100");
+                    pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1 AND `type` = 'warn' ORDER BY `time` DESC LIMIT 100");
                     rs = pst.executeQuery();
                     while (rs.next()) {
                         Timestamp until = rs.getTimestamp("until");
                         int id = rs.getInt("id");
                         if (now.getTime() > until.getTime()) {
-                            pst = con.prepareStatement("UPDATE `warns` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `id` = '" + id + "'");
+                            pst = con.prepareStatement("UPDATE `punishments` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `id` = '" + id + "' AND `type` = 'warn'");
                             pst.execute();
                         }
                     }
 
-                    pst = con.prepareStatement("INSERT INTO `warns` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
-                            " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL," +
+                    pst = con.prepareStatement("INSERT INTO `punishments` (`id`, `type`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
+                            " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL, 'warn'," +
                             " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUUID + "', '1', CURRENT_TIMESTAMP, '" + com.dnyferguson.thepunisher.utils.Time.getForwards("7d") + "', '" + ip + "', '', '', NULL)");
                     pst.execute();
                     sender.sendMessage(Chat.format("&aSuccessfully warned " + target + " for " + reason + "!"));
-//                    plugin.getRedis().sendMessage("alertplayers/" + "&cA player has been warned by &7" + punisherIgn + "&c!");
                     plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has warned &7" + ign + "&c for &7" + reason + "&c!");
 
                     // Punish based on warn count
-                    pst = con.prepareStatement("SELECT * FROM `warns` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1 ORDER BY `time` DESC LIMIT " + highestTrigger);
+                    pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1 AND `type` = 'warn' ORDER BY `time` DESC LIMIT " + highestTrigger);
                     rs = pst.executeQuery();
                     int count = 0;
                     while (rs.next()) {

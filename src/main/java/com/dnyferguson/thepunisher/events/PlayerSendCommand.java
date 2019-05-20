@@ -4,6 +4,7 @@ import com.dnyferguson.thepunisher.ThePunisher;
 import com.dnyferguson.thepunisher.utils.Chat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
@@ -23,7 +24,7 @@ public class PlayerSendCommand implements Listener {
         this.blockedCommandsWhileMuted = plugin.getConfig().getStringList("blocked-commands-when-muted");
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.LOWEST)
     public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
         Player player = e.getPlayer();
         String uuid = player.getUniqueId().toString();
@@ -52,14 +53,14 @@ public class PlayerSendCommand implements Listener {
                         return;
                     }
 
-                    pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `ip` = '" + player.getAddress().getAddress().getHostAddress() + "' AND `active` = 1");
+                    pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `ip` = '" + player.getAddress().getAddress().getHostAddress() + "' AND `active` = 1 AND `type` = 'mute'");
                     rs = pst.executeQuery();
                     if (rs.next()) {
                         Timestamp now = new Timestamp(new Date().getTime());
                         Timestamp until = rs.getTimestamp("until");
                         if (until != null) {
                             if (now.getTime() > until.getTime()) {
-                                pst = con.prepareStatement("UPDATE `mutes` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "'");
+                                pst = con.prepareStatement("UPDATE `punishments` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "' AND `type` = 'mute'");
                                 pst.execute();
                                 plugin.getMutedPlayers().remove(uuid);
                                 player.sendMessage(Chat.format("&aYour mute has expired and you can now speak again!"));

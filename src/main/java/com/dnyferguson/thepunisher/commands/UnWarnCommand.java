@@ -53,7 +53,7 @@ public class UnWarnCommand implements CommandExecutor {
             @Override
             public void run() {
                 try (Connection con = plugin.getSql().getDatasource().getConnection()) {
-                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `warns` WHERE `" + targetType + "` = '" + target + "' ORDER BY `time` DESC LIMIT 1");
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `" + targetType + "` = '" + target + "' AND `type` = 'warn' ORDER BY `time` DESC LIMIT 1");
                     ResultSet rs = pst.executeQuery();
                     if (rs.next()) {
                         int id = rs.getInt("id");
@@ -65,7 +65,7 @@ public class UnWarnCommand implements CommandExecutor {
                                 "Removed warning" + " (" + id + ")" +  " User: " + punishedIgn + ", UUID: " + punishedUuid + ", Reason: " + reason + ")', CURRENT_TIMESTAMP)");
                         pst.execute();
 
-                        pst = con.prepareStatement("DELETE FROM `warns` WHERE `id` = '" + id + "'");
+                        pst = con.prepareStatement("DELETE FROM `punishments` WHERE `id` = '" + id + "' AND `type` = 'warn'");
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully deleted " + target + "\'s latest warning."));
                         plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has unwarned &7" + punishedIgn + "&c!");

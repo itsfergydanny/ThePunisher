@@ -54,7 +54,7 @@ public class CheckmuteCommand implements CommandExecutor {
                     String date = "";
                     String punisher = "";
 
-                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `" + muteType + "` = '" + target + "' AND `active` = 1");
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `" + muteType + "` = '" + target + "' AND `active` = 1 AND `type` = 'mute'");
                     ResultSet rs = pst.executeQuery();
                     if (rs.next()) {
                         muted = true;

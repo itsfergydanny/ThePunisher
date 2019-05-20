@@ -57,7 +57,7 @@ public class UnbanCommand implements CommandExecutor {
 
                     boolean found = false;
 
-                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `bans` WHERE `" + banType + "` = '" + target + "' AND `active` = 1");
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `" + banType + "` = '" + target + "' AND `active` = 1 AND `type` = 'ban'");
                     ResultSet rs = pst.executeQuery();
 
                     String ign = "";
@@ -65,7 +65,7 @@ public class UnbanCommand implements CommandExecutor {
                     while (rs.next()) {
                         ign = rs.getString("ign");
                         found = true;
-                        pst = con.prepareStatement("UPDATE `bans` SET `active`='0',`remover_ign`='" + removerIgn + "',`remover_uuid`='" + removerUuid + "',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + rs.getString("uuid") + "'");
+                        pst = con.prepareStatement("UPDATE `punishments` SET `active`='0',`remover_ign`='" + removerIgn + "',`remover_uuid`='" + removerUuid + "',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + rs.getString("uuid") + "' AND `type` = 'ban'");
                         pst.execute();
                     }
 

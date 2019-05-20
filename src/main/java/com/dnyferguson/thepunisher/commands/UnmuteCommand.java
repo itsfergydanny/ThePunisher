@@ -57,7 +57,7 @@ public class UnmuteCommand implements CommandExecutor {
 
                     boolean found = false;
 
-                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `" + muteType + "` = '" + target + "' AND `active` = 1");
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `" + muteType + "` = '" + target + "' AND `active` = 1 AND `type` = 'mute'");
                     ResultSet rs = pst.executeQuery();
                     String uuid = "";
                     String ign = "";
@@ -66,7 +66,7 @@ public class UnmuteCommand implements CommandExecutor {
                         ign = rs.getString("ign");
 
                         found = true;
-                        pst = con.prepareStatement("UPDATE `mutes` SET `active`='0',`remover_ign`='" + removerIgn + "',`remover_uuid`='" + removerUuid + "',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "'");
+                        pst = con.prepareStatement("UPDATE `punishments` SET `active`='0',`remover_ign`='" + removerIgn + "',`remover_uuid`='" + removerUuid + "',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "' AND `type` = 'mute'");
                         pst.execute();
 
                         plugin.getMutedPlayers().remove(uuid);

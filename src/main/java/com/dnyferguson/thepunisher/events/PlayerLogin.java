@@ -52,7 +52,7 @@ public class PlayerLogin implements Listener {
                 bypassBan = true;
             }
 
-            pst = con.prepareStatement("SELECT * FROM `bans` WHERE `ip` = '" + ip + "' AND `active` = 1");
+            pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `ip` = '" + ip + "' AND `active` = 1 AND `type` = 'ban'");
             rs = pst.executeQuery();
             if (rs.next()) {
                 if (!bypassBan) {
@@ -60,7 +60,7 @@ public class PlayerLogin implements Listener {
                     Timestamp until = rs.getTimestamp("until");
                     if (until != null) {
                         if (now.getTime() > until.getTime()) {
-                            pst = con.prepareStatement("UPDATE `bans` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `ip` = '" + ip + "'");
+                            pst = con.prepareStatement("UPDATE `punishments` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `ip` = '" + ip + "' AND `type` = 'ban'");
                             pst.execute();
                         } else {
                             callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("until"));
@@ -71,7 +71,7 @@ public class PlayerLogin implements Listener {
             }
 
             // Check if uuid is banned
-            pst = con.prepareStatement("SELECT * FROM `bans` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
+            pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `uuid` = '" + uuid + "' AND `active` = 1 AND `type` = 'ban'");
             rs = pst.executeQuery();
             if (rs.next()) {
                 if (!bypassBan) {
@@ -79,7 +79,7 @@ public class PlayerLogin implements Listener {
                     Timestamp until = rs.getTimestamp("until");
                     if (until != null) {
                         if (now.getTime() > until.getTime()) {
-                            pst = con.prepareStatement("UPDATE `bans` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "'");
+                            pst = con.prepareStatement("UPDATE `punishments` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "' AND `type` = 'ban'");
                             pst.execute();
                         } else {
                             callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("until"));
@@ -97,41 +97,53 @@ public class PlayerLogin implements Listener {
             }
 
             // Check if ip is muted
-            pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `ip` = '" + ip + "' AND `active` = 1");
+            pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `ip` = '" + ip + "' AND `active` = 1 AND `type` = 'mute'");
             rs = pst.executeQuery();
             if (rs.next()) {
                 if (!bypassMute) {
                     Timestamp now = new Timestamp(new Date().getTime());
                     Timestamp until = rs.getTimestamp("until");
+                    boolean muteStillValid = true;
                     if (until != null) {
                         if (now.getTime() > until.getTime()) {
-                            pst = con.prepareStatement("UPDATE `mutes` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `ip` = '" + ip + "'");
+                            pst = con.prepareStatement("UPDATE `punishments` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `ip` = '" + ip + "' AND `type` = 'mute'");
                             pst.execute();
-                            plugin.getMutedPlayers().remove(uuid);
-                        } else {
-                            plugin.getMutedPlayers().add(uuid);
+                            muteStillValid = false;
                         }
                     }
+                    if (muteStillValid) {
+                        plugin.getMutedPlayers().add(uuid);
+                    } else {
+                        plugin.getMutedPlayers().remove(uuid);
+                    }
                 }
+            } else {
+                plugin.getMutedPlayers().remove(uuid);
             }
 
             // Check if uuid is muted
-            pst = con.prepareStatement("SELECT * FROM `mutes` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
+            pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `uuid` = '" + uuid + "' AND `active` = 1 AND `type` = 'mute'");
             rs = pst.executeQuery();
             if (rs.next()) {
                 if (!bypassMute) {
                     Timestamp now = new Timestamp(new Date().getTime());
                     Timestamp until = rs.getTimestamp("until");
+                    boolean muteStillValid = true;
                     if (until != null) {
                         if (now.getTime() > until.getTime()) {
-                            pst = con.prepareStatement("UPDATE `mutes` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "'");
+                            pst = con.prepareStatement("UPDATE `punishments` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "' AND `type` = 'mute'");
                             pst.execute();
-                            plugin.getMutedPlayers().remove(uuid);
-                        } else {
-                            plugin.getMutedPlayers().add(uuid);
+                            muteStillValid = false;
                         }
                     }
+                    if (muteStillValid) {
+                        plugin.getMutedPlayers().add(uuid);
+                    } else {
+                        plugin.getMutedPlayers().remove(uuid);
+                    }
                 }
+            } else {
+                plugin.getMutedPlayers().remove(uuid);
             }
 
             // Update ign & last ip

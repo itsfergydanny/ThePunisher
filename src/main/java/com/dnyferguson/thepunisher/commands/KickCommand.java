@@ -84,12 +84,13 @@ public class KickCommand implements CommandExecutor {
                     }
 
                     plugin.getRedis().sendMessage("kick/" + uuid + "/" + reason);
-//                    plugin.getRedis().sendMessage("alertplayers/" + "&cA player has been kicked by &7" + punisherIgn + "&c!");
                     plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has kicked &7" + ign + "&c for &7" + reason + "&c!");
                     sender.sendMessage(Chat.format("&aYou have succesfully kicked " + target + " for " + reason + "!"));
 
                     if (shouldLog) {
-                        pst = con.prepareStatement("INSERT INTO `kicks` (`id`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `time`) VALUES (NULL, '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn +  "', '" + punisherUuid + "', CURRENT_TIMESTAMP)");
+                        pst = con.prepareStatement("INSERT INTO `punishments` (`id`, `type`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
+                                " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL, 'kick'," +
+                                " '" + ign + "', '" + uuid + "', '" + reason + "', '" + punisherIgn + "', '" + punisherUuid + "', '1', CURRENT_TIMESTAMP, NULL, '', '', '', NULL)");
                         pst.execute();
                     }
                 } catch (SQLException e) {

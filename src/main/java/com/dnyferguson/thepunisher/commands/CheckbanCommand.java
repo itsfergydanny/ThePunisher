@@ -54,7 +54,7 @@ public class CheckbanCommand implements CommandExecutor {
                     String date = "";
                     String punisher = "";
 
-                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `bans` WHERE `" + banType + "` = '" + target + "' AND `active` = 1");
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `" + banType + "` = '" + target + "' AND `active` = 1 AND `type` = 'ban'");
                     ResultSet rs = pst.executeQuery();
                     if (rs.next()) {
                         banned = true;

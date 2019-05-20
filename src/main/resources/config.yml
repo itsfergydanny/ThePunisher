@@ -36,7 +36,7 @@ warning-triggers:
   - '3:/mute %player% 1h [Auto] %reason%'
   - '4:/mute %player% 12h [Auto] %reason%'
   - '5:/kick %player% [Auto] Final warning: %reason%'
-  - '6:/ban %player% 1 day [Auto] Excessive Warnings'
+  - '6:/ban %player% 1d [Auto] Excessive Warnings'
 
 #
 # Mutes

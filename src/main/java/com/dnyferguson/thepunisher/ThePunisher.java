@@ -52,13 +52,14 @@ public final class ThePunisher extends JavaPlugin {
         getCommand("staffrollback").setExecutor(new StaffRollbackCommand(this));
         getCommand("unwarn").setExecutor(new UnWarnCommand(this));
         getCommand("history").setExecutor(new HistoryCommand(this));
+        getCommand("punishermerge").setExecutor(new MergeCommand(this));
         getCommand("litebansimport").setExecutor(importer = new ImportCommand(this));
 
         // Iterate thru all online players to apply any mutes on reload
         for (Player player : Bukkit.getOnlinePlayers()) {
             String ip = player.getAddress().getAddress().getHostAddress();
             String uuid = player.getUniqueId().toString();
-            sql.isPlayerPunished(ip, "mutes", new UserIsPunishedCallback() {
+            sql.isPlayerPunished(ip, "mute", new UserIsPunishedCallback() {
                 @Override
                 public void onPlayerIsPunished(boolean result) {
                     if (result) {
