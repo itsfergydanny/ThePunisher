@@ -75,7 +75,6 @@ public class UnmuteCommand implements CommandExecutor {
                     if (found) {
                         sender.sendMessage(Chat.format("&aSuccessfully unmuted " + target + "!"));
                         plugin.getRedis().sendMessage("notify/" + uuid + "/" + "&aYou have been unmuted! You may now speak again.");
-//                        plugin.getRedis().sendMessage("alertplayers/" + "&cA player has been unmuted by &7" + removerIgn + "&c!");
                         plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + removerIgn + "&c has unmuted &7" + ign + "&c!");
                     } else {
                         sender.sendMessage(Chat.format("&cPlayer not found or not muted."));

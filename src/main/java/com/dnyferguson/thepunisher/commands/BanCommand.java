@@ -40,11 +40,23 @@ public class BanCommand implements CommandExecutor {
                 isTemporaryPunishment = true;
                 until = com.dnyferguson.thepunisher.utils.Time.getForwards(args[1]);
             }
+            if (args[1].endsWith("D") && Integer.parseInt(args[1].split("D")[0]) != 0) {
+                isTemporaryPunishment = true;
+                until = com.dnyferguson.thepunisher.utils.Time.getForwards(args[1]);
+            }
             if (args[1].endsWith("h") && Integer.parseInt(args[1].split("h")[0]) != 0) {
                 isTemporaryPunishment = true;
                 until = com.dnyferguson.thepunisher.utils.Time.getForwards(args[1]);
             }
+            if (args[1].endsWith("H") && Integer.parseInt(args[1].split("H")[0]) != 0) {
+                isTemporaryPunishment = true;
+                until = com.dnyferguson.thepunisher.utils.Time.getForwards(args[1]);
+            }
             if (args[1].endsWith("m") && Integer.parseInt(args[1].split("m")[0]) != 0) {
+                isTemporaryPunishment = true;
+                until = com.dnyferguson.thepunisher.utils.Time.getForwards(args[1]);
+            }
+            if (args[1].endsWith("M") && Integer.parseInt(args[1].split("M")[0]) != 0) {
                 isTemporaryPunishment = true;
                 until = com.dnyferguson.thepunisher.utils.Time.getForwards(args[1]);
             }

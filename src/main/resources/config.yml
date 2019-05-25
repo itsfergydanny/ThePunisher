@@ -59,6 +59,10 @@ blocked-commands-when-muted:
   - '/pm'
   - '/p'
   - '/party'
+  - '/is chat'
+  - '/island chat'
+  - '/is tc'
+  - '/marry chat'
 
 #
 # Kicks

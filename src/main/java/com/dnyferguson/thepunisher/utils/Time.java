@@ -54,6 +54,15 @@ public class Time {
         if (input.endsWith("m")) {
             minutes += Integer.valueOf(input.split("m")[0]);
         }
+        if (input.endsWith("D")) {
+            minutes += Integer.valueOf(input.split("D")[0]) * 1440;
+        }
+        if (input.endsWith("H")) {
+            minutes += Integer.valueOf(input.split("H")[0]) * 60;
+        }
+        if (input.endsWith("M")) {
+            minutes += Integer.valueOf(input.split("M")[0]);
+        }
 
         return minutes;
     }
