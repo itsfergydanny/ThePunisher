@@ -41,13 +41,15 @@ public class UnbanCommand implements CommandExecutor {
         return true;
     }
 
-    private void unban(String target, String banType, CommandSender sender) {
+    private void unban(String targ, String type, CommandSender sender) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
                 try(Connection con = plugin.getSql().getDatasource().getConnection()) {
                     String removerIgn = "Console";
                     String removerUuid = "";
+                    String target = targ;
+                    String banType = type;
 
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
@@ -57,8 +59,16 @@ public class UnbanCommand implements CommandExecutor {
 
                     boolean found = false;
 
-                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `" + banType + "` = '" + target + "' AND `active` = 1 AND `type` = 'ban'");
+                    // Check if target is in users table, if so grab uuid, otherwise simply interact with the punishments table
+                    PreparedStatement pst = con.prepareStatement("SELECT * FROM `users` WHERE `" + banType + "` = '" + target + "'");
                     ResultSet rs = pst.executeQuery();
+                    if (rs.next()) {
+                        target = rs.getString("uuid");
+                        banType = "uuid";
+                    }
+
+                    pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `" + banType + "` = '" + target + "' AND `active` = 1 AND `type` = 'ban'");
+                    rs = pst.executeQuery();
 
                     String ign = "";
 

@@ -49,8 +49,6 @@ public class PlayerLogin implements Listener {
             boolean bypassBan = false;
             boolean bypassMute = false;
 
-            System.out.println("BITCH");
-
             // Let in if in bypassban
             PreparedStatement pst = con.prepareStatement("SELECT * FROM `bypass_ban` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
             ResultSet rs = pst.executeQuery();
@@ -64,13 +62,11 @@ public class PlayerLogin implements Listener {
                 if (!bypassBan) {
                     Timestamp now = new Timestamp(new Date().getTime());
                     Timestamp until = rs.getTimestamp("until");
-                    System.out.println("UNTIL IS " + until);
                     if (until != null) {
                         if (now.getTime() > until.getTime()) {
                             pst = con.prepareStatement("UPDATE `punishments` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `ip` = '" + ip + "' AND `type` = 'ban'");
                             pst.execute();
                         } else {
-                            System.out.println("TEMP BAN");
                             callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("until"), rs.getString("ign"));
                         }
                     } else {
@@ -86,13 +82,11 @@ public class PlayerLogin implements Listener {
                 if (!bypassBan) {
                     Timestamp now = new Timestamp(new Date().getTime());
                     Timestamp until = rs.getTimestamp("until");
-                    System.out.println("UNTIL IS " + until);
                     if (until != null) {
                         if (now.getTime() > until.getTime()) {
                             pst = con.prepareStatement("UPDATE `punishments` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "' AND `type` = 'ban'");
                             pst.execute();
                         } else {
-                            System.out.println("TEMP BAN");
                             callback.denyLogin(rs.getString("punisher_ign"), rs.getString("reason"), rs.getTimestamp("until"), rs.getString("ign"));
                         }
                     } else {

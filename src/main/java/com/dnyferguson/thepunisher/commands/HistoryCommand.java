@@ -87,12 +87,22 @@ public class HistoryCommand implements CommandExecutor {
 
                         if (!active) {
                             if (rs.getString("remover_ign").equals("#expired") || rs.getString("remover_ign").isEmpty()) {
-                                String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("until")) + " EST";
+                                String removedTime;
+                                try {
+                                    removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("until")) + " EST";
+                                } catch (NullPointerException e) {
+                                    removedTime = "N/A";
+                                }
                                 message.append("&aExpired on ");
                                 message.append(removedTime);
                                 message.append("&a.\n");
                             } else {
-                                String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
+                                String removedTime;
+                                try {
+                                    removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
+                                } catch (NullPointerException e) {
+                                    removedTime = "N/A";
+                                }
                                 String removerIgn = rs.getString("remover_ign");
                                 message.append("&aUnbanned on ");
                                 message.append(removedTime);
@@ -129,12 +139,22 @@ public class HistoryCommand implements CommandExecutor {
 
                         if (!active) {
                             if (rs.getString("remover_ign").equals("#expired") || rs.getString("remover_ign").isEmpty()) {
-                                String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("until")) + " EST";
+                                String removedTime;
+                                try {
+                                    removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("until")) + " EST";
+                                } catch (NullPointerException e) {
+                                    removedTime = "N/A";
+                                }
                                 message.append("&aExpired on ");
                                 message.append(removedTime);
                                 message.append("&a.\n");
                             } else {
-                                String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
+                                String removedTime;
+                                try {
+                                    removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
+                                } catch (NullPointerException e) {
+                                    removedTime = "N/A";
+                                }
                                 String removerIgn = rs.getString("remover_ign");
                                 message.append("&aUnmuted on ");
                                 message.append(removedTime);
@@ -171,12 +191,22 @@ public class HistoryCommand implements CommandExecutor {
 
                         if (!active) {
                             if (rs.getString("remover_ign").equals("#expired") || rs.getString("remover_ign").isEmpty()) {
-                                String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("until")) + " EST";
+                                String removedTime;
+                                try {
+                                    removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("until")) + " EST";
+                                } catch (NullPointerException e) {
+                                    removedTime = "N/A";
+                                }
                                 message.append("&aExpired on ");
                                 message.append(removedTime);
                                 message.append("&a.\n");
                             } else {
-                                String removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
+                                String removedTime;
+                                try {
+                                    removedTime = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("removed_time")) + " EST";
+                                } catch (NullPointerException e) {
+                                    removedTime = "N/A";
+                                }
                                 String removerIgn = rs.getString("remover_ign");
                                 message.append("&aUnwarned on ");
                                 message.append(removedTime);
@@ -200,7 +230,13 @@ public class HistoryCommand implements CommandExecutor {
                         count++;
                         String reason = rs.getString("reason");
                         String punisherIgn = rs.getString("punisher_ign");
-                        String time = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("time")) + " EST";
+                        String time;
+                        try {
+                          time = new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("time")) + " EST";
+                        } catch (NullPointerException e) {
+                            time = "N/A";
+                        }
+
 
                         message.append("&cKicked on ");
                         message.append(time);
