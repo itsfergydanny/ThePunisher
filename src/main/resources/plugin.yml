@@ -46,4 +46,6 @@ commands:
   litebansimport:
     description: Console only import command to import from litebans.
   punishermerge:
-    description: Merge punishments to one table
+    description: Merge punishments to one table.
+  clearchat:
+    description: Clear chat.

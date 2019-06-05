@@ -54,6 +54,7 @@ public final class ThePunisher extends JavaPlugin {
         getCommand("history").setExecutor(new HistoryCommand(this));
         getCommand("punishermerge").setExecutor(new MergeCommand(this));
         getCommand("litebansimport").setExecutor(importer = new ImportCommand(this));
+        getCommand("clearchat").setExecutor(new ClearChatCommand());
 
         // Iterate thru all online players to apply any mutes on reload
         for (Player player : Bukkit.getOnlinePlayers()) {

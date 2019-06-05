@@ -134,6 +134,12 @@ public class PunisherCommand implements CommandExecutor {
             message.append(listItemFormat.replace("%command%", "/history (username/uuid) (limit [optional])").replace("%usage%", "View a players recent punishments."));
         }
 
+        if (sender.hasPermission("punisher.clearchat")) {
+            availableCommands++;
+            message.append("\n");
+            message.append(listItemFormat.replace("%command%", "/clearchat").replace("%usage%", "Clear chat."));
+        }
+
         // If has access to 0 commands, return message stating so
         if (availableCommands < 1) {
             message.append("\n");
