@@ -29,6 +29,10 @@ redis:
 
 # Configure global system settings here
 
+# Which ips to exclude from /alts
+excluded-ips:
+  - '167.99.158.34'
+
 #
 # Warnings
 #

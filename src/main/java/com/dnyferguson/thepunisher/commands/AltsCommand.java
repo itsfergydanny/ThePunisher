@@ -10,13 +10,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AltsCommand implements CommandExecutor {
 
     private ThePunisher plugin;
+    private List<String> excludedIps = new ArrayList<>();
 
     public AltsCommand(ThePunisher plugin) {
         this.plugin = plugin;
+        excludedIps = plugin.getConfig().getStringList("excluded-ips");
     }
 
     @Override
@@ -45,7 +49,7 @@ public class AltsCommand implements CommandExecutor {
                         String delimiter = "&e";
 
                         String ip = rs.getString("ip");
-                        if (ip.isEmpty()) {
+                        if (ip.isEmpty() || excludedIps.contains(ip)) {
                             sender.sendMessage(Chat.format("&cAlts not found."));
                             return;
                         }
