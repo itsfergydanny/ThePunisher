@@ -9,14 +9,18 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class PlayerLogin implements Listener {
 
     private ThePunisher plugin;
+    private List<String> excludedIps = new ArrayList<>();
 
     public PlayerLogin(ThePunisher plugin) {
         this.plugin = plugin;
+        excludedIps = plugin.getConfig().getStringList("excluded-ips");
     }
 
     @EventHandler
@@ -53,6 +57,11 @@ public class PlayerLogin implements Listener {
             PreparedStatement pst = con.prepareStatement("SELECT * FROM `bypass_ban` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
             ResultSet rs = pst.executeQuery();
             if (rs.next()) {
+                bypassBan = true;
+            }
+
+            // Check if excluded ip
+            if (excludedIps.contains(ip)) {
                 bypassBan = true;
             }
 
