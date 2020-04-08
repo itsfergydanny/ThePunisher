@@ -19,6 +19,11 @@ public class ExpiredPunishmentLifter {
                         int count = 0;
                         while (result.next()) {
                             int id = result.getInt("id");
+                            String type = result.getString("type");
+                            String uuid = result.getString("uuid");
+                            if (type.equals("mute")) {
+                                plugin.getMutedPlayers().remove(uuid);
+                            }
                             plugin.getSql().executeStatementAsync("UPDATE `punishments` SET `active`='0', `remover_ign`='#expired', `remover_uuid`='', `removed_time`=CURRENT_TIMESTAMP WHERE `id` = '" + id + "'");
                             count++;
                         }
