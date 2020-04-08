@@ -91,6 +91,64 @@ public class MySQL {
         });
     }
 
+    public void getResultAsync(String stmt, FindResultCallback callback) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try (Connection con = datasource.getConnection()) {
+                    PreparedStatement pst = con.prepareStatement(stmt);
+                    ResultSet rs = pst.executeQuery();
+                    callback.onQueryDone(rs);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void getResultSync(String stmt, FindResultCallback callback) {
+        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try (Connection con = datasource.getConnection()) {
+                    PreparedStatement pst = con.prepareStatement(stmt);
+                    ResultSet rs = pst.executeQuery();
+                    callback.onQueryDone(rs);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void executeStatementSync(String stmt) {
+        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try (Connection con = datasource.getConnection()) {
+                    PreparedStatement pst = con.prepareStatement(stmt);
+                    pst.execute();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void executeStatementAsync(String stmt) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try (Connection con = datasource.getConnection()) {
+                    PreparedStatement pst = con.prepareStatement(stmt);
+                    pst.execute();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     public void convertToNewDataStructure() {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override

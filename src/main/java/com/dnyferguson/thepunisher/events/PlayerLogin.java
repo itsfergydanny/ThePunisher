@@ -1,6 +1,7 @@
 package com.dnyferguson.thepunisher.events;
 
 import com.dnyferguson.thepunisher.ThePunisher;
+import com.dnyferguson.thepunisher.database.FindResultCallback;
 import com.dnyferguson.thepunisher.interfaces.UserBannedCallback;
 import com.dnyferguson.thepunisher.utils.Chat;
 import org.bukkit.event.EventHandler;
@@ -9,14 +10,14 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class PlayerLogin implements Listener {
 
     private ThePunisher plugin;
-    private List<String> excludedIps = new ArrayList<>();
+    private List<String> excludedIps;
 
     public PlayerLogin(ThePunisher plugin) {
         this.plugin = plugin;
@@ -26,10 +27,12 @@ public class PlayerLogin implements Listener {
     @EventHandler
     public void onPlayerPreLogin(AsyncPlayerPreLoginEvent e) {
         String username = e.getName();
-        String uuid = e.getUniqueId().toString();
+        UUID uuid = e.getUniqueId();
         String ip = e.getAddress().getHostAddress();
 
-        checkUser(username, uuid, ip, new UserBannedCallback() {
+        checkMute(uuid, ip);
+
+        checkBan(username, uuid.toString(), ip, new UserBannedCallback() {
             @Override
             public void denyLogin(String punisher, String reason, String punishedIgn) {
                 String message = Chat.format("\n&cYou have been permanently banned for: \n&7" + reason + "&c.\n" +
@@ -48,10 +51,54 @@ public class PlayerLogin implements Listener {
         });
     }
 
-    private void checkUser(String username, String uuid, String ip, UserBannedCallback callback) {
+    private void checkMute(UUID uuid, String ip) {
+        final boolean[] bypassing = {false};
+        if (excludedIps.contains(ip)) {
+            bypassing[0] = true;
+        }
+
+        plugin.getSql().getResultAsync("SELECT * FROM `bypass_mute` WHERE `uuid`='" + uuid + "' AND `active`='1'", new FindResultCallback() {
+            @Override
+            public void onQueryDone(ResultSet result) throws SQLException {
+                if (result.next()) {
+                    bypassing[0] = true;
+                }
+            }
+        });
+
+        if (bypassing[0]) {
+            return;
+        }
+
+        final boolean[] muted = {false};
+
+        plugin.getSql().getResultAsync("SELECT * FROM `punishments` WHERE `ip`='" + ip + "' AND `type`='mute' AND `active`='1'", new FindResultCallback() {
+            @Override
+            public void onQueryDone(ResultSet result) throws SQLException {
+                if (result.next()) {
+                    plugin.getMutedPlayers().add(uuid.toString());
+                    muted[0] = true;
+                }
+            }
+        });
+
+        if (muted[0]) {
+            return;
+        }
+
+        plugin.getSql().getResultAsync("SELECT * FROM `punishments` WHERE `uuid` = '" + uuid + "' AND `active` = 1 AND `type` = 'mute'", new FindResultCallback() {
+            @Override
+            public void onQueryDone(ResultSet result) throws SQLException {
+                if (result.next()) {
+                    plugin.getMutedPlayers().add(uuid.toString());
+                }
+            }
+        });
+    }
+
+    private void checkBan(String username, String uuid, String ip, UserBannedCallback callback) {
         try (Connection con = plugin.getSql().getDatasource().getConnection()) {
             boolean bypassBan = false;
-            boolean bypassMute = false;
 
             // Let in if in bypassban
             PreparedStatement pst = con.prepareStatement("SELECT * FROM `bypass_ban` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
@@ -104,77 +151,20 @@ public class PlayerLogin implements Listener {
                 }
             }
 
-            // let thru if bypassmute
-            pst = con.prepareStatement("SELECT * FROM `bypass_mute` WHERE `uuid` = '" + uuid + "' AND `active` = 1");
-            rs = pst.executeQuery();
-            if (rs.next()) {
-                bypassMute = true;
-            }
-
-            // Check if ip is muted
-            pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `ip` = '" + ip + "' AND `active` = 1 AND `type` = 'mute'");
-            rs = pst.executeQuery();
-            if (rs.next()) {
-                if (!bypassMute) {
-                    Timestamp now = new Timestamp(new Date().getTime());
-                    Timestamp until = rs.getTimestamp("until");
-                    boolean muteStillValid = true;
-                    if (until != null) {
-                        if (now.getTime() > until.getTime()) {
-                            pst = con.prepareStatement("UPDATE `punishments` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `ip` = '" + ip + "' AND `type` = 'mute'");
-                            pst.execute();
-                            muteStillValid = false;
-                        }
+            // update user in users table
+            plugin.getSql().getResultAsync("SELECT * FROM `users` WHERE `uuid` = '" + uuid + "'", new FindResultCallback() {
+                @Override
+                public void onQueryDone(ResultSet result) throws SQLException {
+                    if (result.next()) {
+                        plugin.getSql().executeStatementAsync("UPDATE `users` SET `ign`='" + username + "',`ip`='" + ip + "' WHERE `uuid` = '" + uuid + "'");
+                        return;
                     }
-                    if (muteStillValid) {
-                        plugin.getMutedPlayers().add(uuid);
-                    } else {
-                        plugin.getMutedPlayers().remove(uuid);
-                    }
+                    plugin.getSql().executeStatementAsync("INSERT INTO `users` (`id`, `ign`, `uuid`, `ip`) VALUES (NULL, '" + username + "', '" + uuid + "', '" + ip + "')");
                 }
-            } else {
-                plugin.getMutedPlayers().remove(uuid);
-            }
-
-            // Check if uuid is muted
-            pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `uuid` = '" + uuid + "' AND `active` = 1 AND `type` = 'mute'");
-            rs = pst.executeQuery();
-            if (rs.next()) {
-                if (!bypassMute) {
-                    Timestamp now = new Timestamp(new Date().getTime());
-                    Timestamp until = rs.getTimestamp("until");
-                    boolean muteStillValid = true;
-                    if (until != null) {
-                        if (now.getTime() > until.getTime()) {
-                            pst = con.prepareStatement("UPDATE `punishments` SET `active`=0,`remover_ign`='#expired',`removed_time`=CURRENT_TIMESTAMP WHERE `uuid` = '" + uuid + "' AND `type` = 'mute'");
-                            pst.execute();
-                            muteStillValid = false;
-                        }
-                    }
-                    if (muteStillValid) {
-                        plugin.getMutedPlayers().add(uuid);
-                    } else {
-                        plugin.getMutedPlayers().remove(uuid);
-                    }
-                }
-            } else {
-                plugin.getMutedPlayers().remove(uuid);
-            }
-
-            // Update ign & last ip
-            pst = con.prepareStatement("SELECT * FROM `users` WHERE `uuid` = '" + uuid + "'");
-            rs = pst.executeQuery();
-            if (rs.next()) {
-                pst = con.prepareStatement("UPDATE `users` SET `ign`='" + username + "',`ip`='" + ip + "' WHERE `uuid` = '" + uuid + "'");
-                pst.execute();
-            } else {
-                pst = con.prepareStatement("INSERT INTO `users` (`id`, `ign`, `uuid`, `ip`) VALUES (NULL, '" + username + "', '" + uuid + "', '" + ip + "')");
-                pst.execute();
-            }
+            });
 
             // Add login to history
-            pst = con.prepareStatement("INSERT INTO `logins` (`id`, `ign`, `uuid`, `ip`, `time`) VALUES (NULL, '" + username + "', '" + uuid + "', '" + ip + "', CURRENT_TIMESTAMP)");
-            pst.execute();
+            plugin.getSql().executeStatementAsync("INSERT INTO `logins` (`id`, `ign`, `uuid`, `ip`, `time`) VALUES (NULL, '" + username + "', '" + uuid + "', '" + ip + "', CURRENT_TIMESTAMP)");
         } catch (SQLException e) {
             e.printStackTrace();
         }

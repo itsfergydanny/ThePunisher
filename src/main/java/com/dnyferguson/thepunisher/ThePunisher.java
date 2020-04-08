@@ -7,6 +7,7 @@ import com.dnyferguson.thepunisher.events.PlayerLogin;
 import com.dnyferguson.thepunisher.events.PlayerSendCommand;
 import com.dnyferguson.thepunisher.interfaces.UserIsPunishedCallback;
 import com.dnyferguson.thepunisher.redis.Redis;
+import com.dnyferguson.thepunisher.tasks.ExpiredPunishmentLifter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -21,6 +22,7 @@ public final class ThePunisher extends JavaPlugin {
     private Redis redis;
     private Set<String> mutedPlayers = new HashSet<>();
     private ImportCommand importer;
+    private ExpiredPunishmentLifter expiredPunishmentLifter;
 
     @Override
     public void onEnable() {
@@ -28,6 +30,7 @@ public final class ThePunisher extends JavaPlugin {
 
         sql = new MySQL(this);
         redis = new Redis(this);
+        expiredPunishmentLifter = new ExpiredPunishmentLifter(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerLogin(this), this);
@@ -95,6 +98,4 @@ public final class ThePunisher extends JavaPlugin {
     public Set<String> getMutedPlayers() {
         return mutedPlayers;
     }
-
-
 }
