@@ -119,6 +119,8 @@ public class StaffRollbackCommand implements CommandExecutor {
                     // Finally rollback based on specific type
                     count = rollbackType(punishmentType, uuid, time, punisherIgn, punisherUuid);
                     sender.sendMessage(Chat.format("&aRolled back " + count + " punishments from " + ign + " (" + uuid + ")."));
+                    plugin.logToDiscord(sender.getName(), "Staff Rollback (/staffrollback)", "User " + sender.getName() + " has rolled back " +
+                            count + " punishments from " + target + "'s punishments.");
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

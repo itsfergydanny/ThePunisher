@@ -82,6 +82,7 @@ public class UnbanCommand implements CommandExecutor {
                     if (found) {
                         sender.sendMessage(Chat.format("&aSuccessfully unbanned " + target + "!"));
                         plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + removerIgn + "&c has unbanned &7" + ign + "&c!");
+                        plugin.logToDiscord(sender.getName(), "Unban (/unban)", "User " + sender.getName() + " has unbanned " + target);
                     } else {
                         sender.sendMessage(Chat.format("&cPlayer not found or not banned."));
                     }

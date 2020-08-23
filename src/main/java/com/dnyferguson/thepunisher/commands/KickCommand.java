@@ -86,6 +86,7 @@ public class KickCommand implements CommandExecutor {
                     plugin.getRedis().sendMessage("kick/" + uuid + "/" + reason);
                     plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has kicked &7" + ign + "&c for &7" + reason + "&c!");
                     sender.sendMessage(Chat.format("&aYou have succesfully kicked " + target + " for " + reason + "!"));
+                    plugin.logToDiscord(sender.getName(), "Kick (/kick)", "User " + sender.getName() + " has kicked " + target + " from the server for reason `" + reason + "`!");
 
                     if (shouldLog) {
                         pst = con.prepareStatement("INSERT INTO `punishments` (`id`, `type`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +

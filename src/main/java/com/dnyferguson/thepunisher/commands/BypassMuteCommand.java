@@ -76,6 +76,7 @@ public class BypassMuteCommand implements CommandExecutor {
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully added " + target + " to the bypass mutes list."));
                         plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + name + "&c has granted &7" + ign + "&c the ability to bypass mutes!");
+                        plugin.logToDiscord(sender.getName(), "Grant Bypass Mute (/bypassmute)", sender.getName() + " has granted the user " + target + " a mute bypass.");
                     } else {
                         sender.sendMessage(Chat.format("&cPlayer not found."));
                     }

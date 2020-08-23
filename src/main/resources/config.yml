@@ -4,6 +4,12 @@
 # Use the /punisher command in-game to get a list of all the commands you have access to
 #
 
+# Server name
+server: 'Hub'
+
+# Discord webhook url
+discordWebhook: ''
+
 # Configure your MySQL settings
 mysql:
   ip: '127.0.0.1'

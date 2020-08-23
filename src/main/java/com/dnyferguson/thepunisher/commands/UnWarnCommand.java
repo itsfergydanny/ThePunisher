@@ -69,6 +69,7 @@ public class UnWarnCommand implements CommandExecutor {
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully deleted " + target + "\'s latest warning."));
                         plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has unwarned &7" + punishedIgn + "&c!");
+                        plugin.logToDiscord(sender.getName(), "Unwarn (/unwarn)", "User " + sender.getName() + " has unwarned " + target + ".");
                     } else {
                         sender.sendMessage(Chat.format("&cPlayer did not have any warnings."));
                     }

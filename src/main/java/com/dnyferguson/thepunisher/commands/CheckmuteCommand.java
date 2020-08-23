@@ -112,6 +112,7 @@ public class CheckmuteCommand implements CommandExecutor {
                                 "&8&m------------------------------";
                         sender.sendMessage(Chat.format(message));
                     }
+//                    plugin.logToDiscord(sender.getName(), "Check Mute (/checkmute)", "User " + sender.getName() + " has checked " + target + "'s mute status.");
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

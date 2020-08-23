@@ -131,6 +131,8 @@ public class BanCommand implements CommandExecutor {
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully banned " + target + " for " + reason + " until " + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + " EST!"));
                         plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has banned &7" + ign + "&c for &7" + reason + "&c until &7" + new SimpleDateFormat("MM-dd-yyyy @ HH:mm").format(until) + "&c!");
+                        plugin.logToDiscord(punisherIgn, "Temp Ban (/ban)", "User " + punisherIgn + " has temp banned " + target + " for reason `" +
+                                reason + "` until " + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + " EST!");
                     } else {
                         pst = con.prepareStatement("INSERT INTO `punishments` (`id`, `type`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
                                 " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL, 'ban'," +
@@ -138,6 +140,8 @@ public class BanCommand implements CommandExecutor {
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully banned " + target + " for " + reason + "!"));
                         plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has banned &7" + ign + "&c for &7" + reason + "&c!");
+                        plugin.logToDiscord(punisherIgn, "Perm Ban (/ban)", "User " + punisherIgn + " has permanently banned " + target + " for reason `" +
+                                reason + "`.");
                     }
                     plugin.getRedis().sendMessage("ban/" + uuid + "/" + reason);
                 } catch (SQLException e) {

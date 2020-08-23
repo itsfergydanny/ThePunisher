@@ -70,6 +70,7 @@ public class AltsCommand implements CommandExecutor {
                         }
 
                         sender.sendMessage(Chat.format("&6Alts (Green = online): " + alts.toString()));
+                        plugin.logToDiscord(sender.getName(), "Alt Check (/alts)", "User " + sender.getName() + " has performed an alt check on " + target + ".");
                         return;
                     }
                     sender.sendMessage(Chat.format("&cPlayer not found."));

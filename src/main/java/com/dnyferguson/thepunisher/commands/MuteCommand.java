@@ -133,6 +133,8 @@ public class MuteCommand implements CommandExecutor {
                         sender.sendMessage(Chat.format("&aSuccessfully muted " + target + " for " + reason + " until " + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + " EST!"));
                         plugin.getRedis().sendMessage("mute/" + uuid + "/" + reason + "/" + new SimpleDateFormat("MM-dd-yyyy @ HH:mm").format(until) + " EST");
                         plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has muted &7" + ign + "&c for &7" + reason + "&c until &7" + new SimpleDateFormat("MM-dd-yyyy @ HH:mm").format(until) + "&c!");
+                        plugin.logToDiscord(sender.getName(), "Temp Mute (/mute)", "User " + sender.getName() + " has temporarily muted " +
+                                target + " for reason `" + reason + "` until " + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + " EST!");
                     } else {
                         pst = con.prepareStatement("INSERT INTO `punishments` (`id`, `type`, `ign`, `uuid`, `reason`, `punisher_ign`, `punisher_uuid`, `active`, `time`," +
                                 " `until`, `ip`, `remover_ign`, `remover_uuid`, `removed_time`) VALUES (NULL, 'mute'," +
@@ -141,6 +143,8 @@ public class MuteCommand implements CommandExecutor {
                         sender.sendMessage(Chat.format("&aSuccessfully muted " + target + " for " + reason + "!"));
                         plugin.getRedis().sendMessage("mute/" + uuid + "/" + reason + "/" + "");
                         plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has muted &7" + ign + "&c for &7" + reason + "&c!");
+                        plugin.logToDiscord(sender.getName(), "Perm Mute (/mute)", "User " + sender.getName() + " has permanently muted " +
+                                target + " for reason `" + reason + "`.");
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();

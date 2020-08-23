@@ -76,6 +76,7 @@ public class BypassBanCommand implements CommandExecutor {
                         pst.execute();
                         sender.sendMessage(Chat.format("&aSuccessfully added " + target + " to the bypass bans list."));
                         plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + name + "&c has granted &7" + ign + "&c the ability to bypass bans!");
+                        plugin.logToDiscord(sender.getName(), "Grant Bypass Ban (/bypassban)", sender.getName() + " has granted the user " + target + " a ban bypass.");
                     } else {
                         sender.sendMessage(Chat.format("&cPlayer not found."));
                     }

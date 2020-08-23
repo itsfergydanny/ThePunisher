@@ -75,6 +75,7 @@ public class UnbypassMuteCommand implements CommandExecutor {
                     if (found) {
                         sender.sendMessage(Chat.format("&aSuccessfully removed " + target + " from the bypass mutes list!"));
                         plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + name + "&c has removed &7" + ign + "&c\'s ability to bypass mutes!");
+                        plugin.logToDiscord(sender.getName(), "Remove Mute Bypass (/unbypassmute)", "User " + sender.getName() + " has removed " + target + "'s ability to bypass mutes.");
                     } else {
                         sender.sendMessage(Chat.format("&cPlayer not found or not bypassing bans."));
                     }

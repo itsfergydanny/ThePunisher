@@ -112,6 +112,7 @@ public class CheckbanCommand implements CommandExecutor {
                                 "&8&m------------------------------";
                         sender.sendMessage(Chat.format(message));
                     }
+//                    plugin.logToDiscord(sender.getName(), "Check Ban (/checkban)", "User " + sender.getName() + " has checked " + target + "'s ban status.");
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

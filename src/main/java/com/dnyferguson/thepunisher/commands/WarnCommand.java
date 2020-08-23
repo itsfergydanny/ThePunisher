@@ -112,6 +112,8 @@ public class WarnCommand implements CommandExecutor {
                     pst.execute();
                     sender.sendMessage(Chat.format("&aSuccessfully warned " + target + " for " + reason + "!"));
                     plugin.getRedis().sendMessage("alertstaff/" + "&c[Staff] &7" + punisherIgn + "&c has warned &7" + ign + "&c for &7" + reason + "&c!");
+                    plugin.logToDiscord(sender.getName(), "Warn (/warn)", "User " + sender.getName() + " has warned " + target + " for reason `" +
+                            reason + "`.");
 
                     // Punish based on warn count
                     pst = con.prepareStatement("SELECT * FROM `punishments` WHERE `" + targetType + "` = '" + target + "' AND `active` = 1 AND `type` = 'warn' ORDER BY `time` DESC LIMIT " + highestTrigger);
