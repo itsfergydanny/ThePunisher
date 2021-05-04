@@ -15,9 +15,13 @@ import java.util.Date;
 public class PlayerChat implements Listener {
 
     private ThePunisher plugin;
+    private String messagePermMute;
+    private String messageTempMute;
 
     public PlayerChat(ThePunisher plugin) {
         this.plugin = plugin;
+        messagePermMute = plugin.getConfig().getString("messages.punisher-perm-mute");
+        messageTempMute = plugin.getConfig().getString("messages.punisher-temp-mute");
     }
 
     @EventHandler (priority = EventPriority.LOWEST)
@@ -58,10 +62,10 @@ public class PlayerChat implements Listener {
                                 player.sendMessage(Chat.format("&aYour mute has expired and you can now speak again!"));
                                 return;
                             }
-                            player.sendMessage(Chat.format("&cYou can\'t speak because you have been muted for &7" + rs.getString("reason") + " &cyour mute expires on &7" + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("until")) + " EST"));
+                            player.sendMessage(Chat.format(messageTempMute.replace("%reason%", rs.getString("reason")).replace("%until%", new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(rs.getTimestamp("until")))));
                             return;
                         }
-                        player.sendMessage(Chat.format("&cYou can't speak because you have been muted for &7" + rs.getString("reason")));
+                        player.sendMessage(Chat.format(messagePermMute.replace("%reason%", rs.getString("reason"))));
                     }
 
                 } catch (SQLException e) {
