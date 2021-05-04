@@ -18,10 +18,14 @@ public class PlayerLogin implements Listener {
 
     private ThePunisher plugin;
     private List<String> excludedIps;
+    private String loginMessagePermBan;
+    private String loginMessageTempBan;
 
     public PlayerLogin(ThePunisher plugin) {
         this.plugin = plugin;
         excludedIps = plugin.getConfig().getStringList("excluded-ips");
+        loginMessagePermBan = plugin.getConfig().getString("messages.punisher-perm-ban");
+        loginMessageTempBan = plugin.getConfig().getString("messages.punisher-temp-ban");
     }
 
     @EventHandler
@@ -35,17 +39,13 @@ public class PlayerLogin implements Listener {
         checkBan(username, uuid.toString(), ip, new UserBannedCallback() {
             @Override
             public void denyLogin(String punisher, String reason, String punishedIgn) {
-                String message = Chat.format("\n&cYou have been permanently banned for: \n&7" + reason + "&c.\n" +
-                        "Under the name: &7" + punishedIgn + "&c.\nBy staff member: &7" + punisher + "&c.\n \n&aAppeal at bit.ly/mmt-appeal or\n" +
-                        " by emailing support@momentonetwork.net or\n Purchase an instant unban at bit.ly/mmt-buyunban");
+                String message = Chat.format(loginMessagePermBan).replace("%reason%", reason).replace("%punishedIgn%", punishedIgn).replace("%punisher%", punisher);
                 e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, message);
             }
 
             @Override
             public void denyLogin(String punisher, String reason, Timestamp until, String punishedIgn) {
-                String message = Chat.format("\n&cYou have been temporarily banned for: \n&7" + reason + "&c.\n" +
-                        "Under the name: &7" + punishedIgn + "&c.\nBy staff member: &7" + punisher + "&c.\n \n&eExpires: &7" + new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until) + " EST&e.\n \n&aAppeal at bit.ly/mmt-appeal or\n" +
-                        " by emailing support@momentonetwork.net or\n Purchase an instant unban at bit.ly/mmt-buyunban");
+                String message = Chat.format(loginMessageTempBan).replace("%reason%", reason).replace("%punishedIgn%", punishedIgn).replace("%punisher%", punisher).replace("%until%", new SimpleDateFormat("MM/dd/yyyy @ HH:mm").format(until));
                 e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, message);
             }
         });

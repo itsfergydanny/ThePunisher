@@ -89,3 +89,7 @@ messages:
   punisher-command-header: '&e&lThe Punisher &7(Available Commands: %amount%)'
   punisher-command-list-format: '&e%command% &7- &6%usage%'
   punisher-command-no-available-commands: '&cYou currently have no permissions. Ask management about it!'
+  punisher-perm-ban: "\n&cYou have been permanently banned for: \n&7%reason%&c.\nUnder the name: &7%punishedIgn%&c.\nBy staff member: &7%punisher%&c.\n \n&aAppeal at bit.ly/mmt-appeal or by emailing support@momentonetwork.net"
+  punisher-temp-ban: "\n&cYou have been temporarily banned for: \n&7%reason%&c.\nUnder the name: &7%punishedIgn%&c.\nBy staff member: &7%punisher%&c.\n&eExpires: &7%until% EST&e.\n \n&aAppeal at bit.ly/mmt-appeal or by emailing support@momentonetwork.net"
+  punisher-perm-mute: "&cYou can't speak because you have been muted for &7%reason%"
+  punisher-temp-mute: "&cYou can't speak because you have been muted for &7%reason% &cyour mute expires on &7%until% EST"
