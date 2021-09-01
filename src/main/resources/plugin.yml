@@ -2,6 +2,7 @@ name: ThePunisher
 version: ${project.version}
 main: com.dnyferguson.thepunisher.ThePunisher
 authors: [fergydanny]
+api-version: 1.16
 description: A feature rich punishment system.
 website: https://dnyferguson.com
 commands:
